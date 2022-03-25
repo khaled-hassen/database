@@ -1,8 +1,11 @@
 #include "CSVFile.h"
 #include <cstdio>
 #include <sstream>
+#include <utility>
 
-void CSVFile::createNewFile(const std::string& filename)
+CSVFile::CSVFile(std::string filename) : filename(std::move(filename)) { }
+
+void CSVFile::createNewFile()
 {
     file.open(filename, std::ios::out);
     if (!file.is_open()) throw std::exception("Can't create file");
@@ -10,7 +13,7 @@ void CSVFile::createNewFile(const std::string& filename)
 
 void CSVFile::close() { if (file.is_open()) file.close(); }
 
-void CSVFile::deleteFile(const std::string& filename)
+void CSVFile::deleteFile()
 {
     close();
     int result = std::remove(filename.c_str());
@@ -47,7 +50,7 @@ void CSVFile::addRow(const Row& row)
     data.push_back(row);
 }
 
-void CSVFile::read(const std::string& filename)
+void CSVFile::read()
 {
     file.open(filename, std::ios::in | std::ios::out);
     if (!file.is_open()) throw std::exception("File doesn't exist");

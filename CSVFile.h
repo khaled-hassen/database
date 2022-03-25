@@ -10,15 +10,15 @@ using Data = std::vector<Row>;
 class CSVFile
 {
 private:
+    std::string filename;
     std::fstream file;
     // the first row will contain the column names
     Data data;
 public:
-    // the default constructor
-    CSVFile() = default;
+    explicit CSVFile(std::string filename);
 
     // create a new csv file
-    void createNewFile(const std::string& filename);
+    void createNewFile();
 
     // save changes to disk
     void save();
@@ -27,7 +27,7 @@ public:
     void close();
 
     // delete the file from disk
-    void deleteFile(const std::string& filename);
+    void deleteFile();
 
     // create a new columnNames in csv file
     void createColumns(const Row& columnNames);
@@ -35,7 +35,8 @@ public:
     // add a new data row
     void addRow(const Row& row);
 
-    void read(const std::string& filename);
+    // read data from the csv file
+    void read();
 };
 
 

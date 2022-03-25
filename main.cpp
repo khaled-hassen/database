@@ -5,13 +5,11 @@ int main()
 {
     try
     {
-        CSVFile csvFile;
-        // csvFile.createNewFile("database.csv");
-        // csvFile.createColumns({ "name", "address", "phone number" });
-        // csvFile.addRow({ "khaled", "o utca", "123456" });
-        // csvFile.addRow({ "hamza", "budapest", "987654" });
-        // csvFile.save();
-        csvFile.read("database.csv");
+        CSVFile csvFile("database.csv");
+        csvFile.createNewFile();
+        csvFile.createColumns({ "name", "address", "phone number" });
+        csvFile.addRow({ "khaled", "o utca", "123456" });
+        csvFile.save();
         csvFile.close();
     } catch (const std::exception& err)
     {
