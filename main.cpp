@@ -1,20 +1,20 @@
 #include <iostream>
-#include "CSVFile.h"
+#include "libs/CLI/CLI.h"
 
 int main()
 {
-    try
+    CLI cli;
+    while (true)
     {
-        CSVFile csvFile("database.csv");
-        csvFile.createNewFile();
-        csvFile.createColumns({ "name", "address", "phone number" });
-        csvFile.addRow({ "khaled", "o utca", "123456" });
-        csvFile.save();
-        csvFile.close();
-    } catch (const std::exception& err)
-    {
-        std::cout << err.what() << std::endl;
-        return 1;
+        try
+        {
+            cli.listen();
+            cli.execute();
+        }
+        catch (const std::exception& error)
+        { std::cout << error.what() << std::endl; }
+
+        if (cli.isClosed()) break;
     }
 
     return 0;
