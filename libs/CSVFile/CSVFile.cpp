@@ -8,7 +8,7 @@ CSVFile::CSVFile(std::string filename) : filename(std::move(filename)) { }
 void CSVFile::createNewFile()
 {
     file.open(filename, std::ios::out);
-    if (!file.is_open()) throw std::exception("Can't create file");
+    if (!file.is_open()) throw std::exception("Can't Create file");
 }
 
 void CSVFile::close() { if (file.is_open()) file.close(); }
