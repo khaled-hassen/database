@@ -3,7 +3,7 @@
 #include <vector>
 #include <sstream>
 
-CLI::CLI() : exit(false) { std::cout << "Type help to Show help" << std::endl; }
+CLI::CLI() : exit(false) { std::cout << "Type help to display available commands" << std::endl; }
 
 void CLI::showHelp()
 {
@@ -18,7 +18,7 @@ void CLI::showHelp()
               << "\t- drop table: delete the opened table\n"
               << "\t- search table <condition>: search table records based on the condition\n"
               << "\t- save table: save the changes in the opened table\n"
-              << "\t- close table: Close the opened table\n"
+              << "\t- close table: close the opened table\n"
               << "\t- Show table: display all the records in the table\n"
               << "\t- insert record <column-1> <column-2> ... <column-n>: insert a new record in the opened table\n"
               << "\t- update record <record-id> <column-name> <new-value>...: update record\n"

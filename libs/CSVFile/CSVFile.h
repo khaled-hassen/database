@@ -17,19 +17,19 @@ private:
 public:
     explicit CSVFile(std::string filename);
 
-    // Create a new csv file
+    // create a new csv file
     void createNewFile();
 
     // save changes to disk
     void save();
 
-    // Close the file
+    // close the file
     void close();
 
     // delete the file from disk
     void deleteFile();
 
-    // Create a new columnNames in csv file
+    // create a new columnNames in csv file
     void createColumns(const Row& columnNames);
 
     // add a new data row

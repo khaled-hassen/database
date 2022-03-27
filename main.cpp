@@ -11,12 +11,16 @@ int main()
     // {
     try
     {
-        // db->Create("users");
-        db->Open("users");
-        // db->Show();
-        // db->Drop();
-        // db->Drop("users");
-        db->Close();
+        // db->CreateDb("users");
+        db->OpenDb("users");
+        db->CreateTable("table1");
+        db->InsertRecord();
+        db->CloseTable();
+        db->InsertRecord();
+        // db->ShowTables();
+        // db->DropDb();
+        // db->DropDb("users");
+        db->CloseDb();
         // cli.listen();
         // cli.execute();
     }
