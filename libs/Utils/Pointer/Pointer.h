@@ -31,7 +31,7 @@ public:
     bool operator==(T* _ptr) const { return ptr == _ptr; }
 
     Pointer(const Pointer<T>& obj) = delete; // copy constructor is deleted
-    Pointer<T>& operator=(int* obj) = delete; // copy assignment is deleted
+    Pointer<T>& operator=(const Pointer<T>& obj) = delete; // copy assignment is deleted
 
     // move assignment
     Pointer<T>& operator=(Pointer<T>&& obj) noexcept
