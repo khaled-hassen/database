@@ -51,6 +51,9 @@ public:
     // close the opened table
     void CloseTable();
 
+    // save the opened table to disk
+    void SaveTable();
+
     // insert a new record in the opened table
     void InsertRecord();
 };

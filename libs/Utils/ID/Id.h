@@ -12,6 +12,8 @@ private:
 public:
     ID() : value(lastId + 1) { ++lastId; }
 
+    static void SetLastID(unsigned id) { lastId = id; }
+
     [[nodiscard]] std::string ToString() const { return std::to_string(value); }
 };
 

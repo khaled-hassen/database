@@ -15,8 +15,9 @@ int main()
         db->OpenDb("users");
         db->CreateTable("table1");
         db->InsertRecord();
+        db->SaveTable();
         db->CloseTable();
-        db->InsertRecord();
+        // db->InsertRecord();
         // db->ShowTables();
         // db->DropDb();
         // db->DropDb("users");

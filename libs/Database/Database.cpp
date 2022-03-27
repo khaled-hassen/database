@@ -89,7 +89,7 @@ void Database::CreateTable(const std::string& tableName)
     std::string filename = dbName + "/" + tableName + ".csv";
     if (fs::exists(filename)) throw std::exception("Table exists");
 
-    table = Pointer(new Table());
+    table = Pointer(new Table(filename));
 }
 
 void Database::CheckOpenedTable() const
@@ -101,6 +101,12 @@ void Database::CloseTable()
 {
     CheckOpenedTable();
     table = Pointer<Table>::GetNull();
+}
+
+void Database::SaveTable()
+{
+    CheckOpenedDb();
+    table->Save();
 }
 
 void Database::InsertRecord()
