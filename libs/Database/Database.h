@@ -66,6 +66,11 @@ public:
     // delete table. if tableName is provided delete tableName else delete the opened table
     void DropTable(const std::string& tableName = "");
 
+    // display the data in the opened table
+    void ShowTable() const;
+
+    // delete a record from opened table
+    void DeleteRecord(unsigned id);
 };
 
 

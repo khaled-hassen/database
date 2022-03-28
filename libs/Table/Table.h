@@ -1,20 +1,19 @@
 #pragma once
 
-#include <unordered_map>
-
-// the first row contains the columns names and types
-using Data = std::vector<std::vector<std::string>>;
+#include "../Utils/types/types.h"
+#include <string>
 
 class Table
 {
 private:
     std::string name;
+    Columns columns;
     Data data;
 
 public:
     explicit Table(std::string name);
 
-    Table(std::string name, const Data& _data);
+    Table(std::string name, Columns columns, const Data& data);
 
     [[nodiscard]] const std::string& GetName() const;
 
@@ -24,6 +23,11 @@ public:
     // insert a new row to table
     void Insert();
 
+    // display the data in the table
+    void Show() const;
+
+    // delete a record by id from table
+    void DeleteRecord(unsigned id);
 };
 
 

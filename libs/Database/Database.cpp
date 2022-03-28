@@ -110,8 +110,10 @@ void Database::OpenTable(const std::string& tableName)
     if (table != nullptr) throw std::exception("There is an open table, close it before opening a new one");
     std::string filename = *GetDbTable(tableName);
     CSVFile file(filename);
-    auto data = file.Read();
-    table = Pointer(new Table(filename, data));
+    Columns columns;
+    Data data;
+    file.Read(columns, data);
+    table = Pointer(new Table(filename, columns, data));
 }
 
 void Database::CheckOpenedTable() const
@@ -168,4 +170,16 @@ void Database::DropTable(const std::string& tableName)
     tableNames.erase(it);
     CSVFile file(filename);
     file.Delete();
+}
+
+void Database::ShowTable() const
+{
+    CheckOpenedTable();
+    table->Show();
+}
+
+void Database::DeleteRecord(unsigned id)
+{
+    CheckOpenedTable();
+    table->DeleteRecord(id);
 }

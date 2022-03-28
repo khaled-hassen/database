@@ -24,37 +24,59 @@ void CSVFile::Delete()
 }
 
 
-void CSVFile::Save(const Data& data)
+void CSVFile::Save(const Columns& cols, const Data& data)
 {
     file.clear();
     file.seekp(0);
-    for (const auto& row: data)
+    unsigned size = cols.size();
+    for (const auto& col: cols) file << col << ",";
+    // delete trailing comma
+    long long pos = file.tellp();
+    file.seekp(pos - 1);
+    file.write(" ", 1);
+    file << std::endl;
+
+    for (const auto& record: data)
     {
-        unsigned size = row.size();
-        for (int i = 0; i < size; ++i)
-        {
-            if (i == size - 1) file << row[i];
-            else file << row[i] << ",";
-        }
+        for (const auto& it: record) file << it.second << ",";
+        // delete trailing comma
+        pos = file.tellp();
+        file.seekp(pos - 1);
+        file.write(" ", 1);
         file << std::endl;
     }
 }
 
-Data CSVFile::Read()
+void CSVFile::Read(Columns& outCols, Data& outData)
 {
-    file.open(filename, std::ios::in | std::ios::out);
+    file.open(filename, std::ios::in);
     if (!file.is_open()) throw std::exception("File doesn't exist");
 
     std::string line, value;
-    Data data;
-    std::vector<std::string> row;
+    outCols.clear();
+    outData.clear();
+    bool isFirstLine = true;
     while (std::getline(file, line))
     {
-        row.clear();
         std::stringstream stream(line);
-        while (std::getline(stream, value, ',')) row.push_back(value);
-        data.push_back(row);
+        if (isFirstLine)
+        {
+            isFirstLine = false;
+            while (std::getline(stream, value, ',')) outCols.push_back(value);
+        }
+        else
+        {
+            Record record;
+            record.reserve(outCols.size());
+            unsigned idx = 0;
+            while (std::getline(stream, value, ','))
+            {
+                std::string col = outCols.at(idx++);
+                unsigned index = col.find(':');
+                std::string key = col.substr(0, index);
+                record.insert({ key, value });
+            }
+            outData.push_back(record);
+        }
     }
-
-    return data;
 }

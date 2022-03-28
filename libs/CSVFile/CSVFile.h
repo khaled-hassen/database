@@ -1,10 +1,8 @@
 #pragma once
 
+#include "../Utils/types/types.h"
 #include <fstream>
 #include <string>
-#include <vector>
-
-using Data = std::vector<std::vector<std::string>>;
 
 class CSVFile
 {
@@ -25,13 +23,13 @@ public:
     void CreateNewFile();
 
     // save changes to disk
-    void Save(const Data& data);
+    void Save(const Columns& cols, const Data& data);
 
     // delete the file from disk
     void Delete();
 
     // read data from the csv file
-    [[nodiscard]] Data Read();
+    void Read(Columns& outCols, Data& outData);
 };
 
 

@@ -13,13 +13,17 @@ int main()
     {
         // db->CreateDb("users");
         db->OpenDb("users");
-        db->OpenTable("table1");
         // db->DropTable("table2");
-        // db->CreateTable("table1");
+        // db->CreateTable("table2");
+        // db->InsertRecord();
+        // db->SaveTable();
+        // db->CloseTable();
+        // db->OpenTable("table1");
+        db->OpenTable("table2");
+        db->ShowTable();
         db->InsertRecord();
         db->SaveTable();
         db->CloseTable();
-        // db->InsertRecord();
         // db->ShowTables();
         // db->DropDb();
         // db->DropDb("users");
