@@ -11,8 +11,15 @@ class CSVFile
 private:
     std::string filename;
     std::fstream file;
+
+private:
+    // close the file
+    void Close();
+
 public:
     explicit CSVFile(std::string filename);
+
+    virtual ~CSVFile();
 
     // create a new csv file
     void CreateNewFile();
@@ -20,14 +27,11 @@ public:
     // save changes to disk
     void Save(const Data& data);
 
-    // close the file
-    void Close();
-
     // delete the file from disk
-    void DeleteFile();
+    void Delete();
 
     // read data from the csv file
-    void Read();
+    [[nodiscard]] Data Read();
 };
 
 

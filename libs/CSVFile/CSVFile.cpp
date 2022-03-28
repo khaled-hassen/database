@@ -5,6 +5,8 @@
 
 CSVFile::CSVFile(std::string filename) : filename(std::move(filename)) { }
 
+CSVFile::~CSVFile() { Close(); }
+
 void CSVFile::CreateNewFile()
 {
     file.open(filename, std::ios::out);
@@ -13,7 +15,7 @@ void CSVFile::CreateNewFile()
 
 void CSVFile::Close() { if (file.is_open()) file.close(); }
 
-void CSVFile::DeleteFile()
+void CSVFile::Delete()
 {
     Close();
     int result = std::remove(filename.c_str());
@@ -38,7 +40,7 @@ void CSVFile::Save(const Data& data)
     }
 }
 
-void CSVFile::Read()
+Data CSVFile::Read()
 {
     file.open(filename, std::ios::in | std::ios::out);
     if (!file.is_open()) throw std::exception("File doesn't exist");
@@ -53,4 +55,6 @@ void CSVFile::Read()
         while (std::getline(stream, value, ',')) row.push_back(value);
         data.push_back(row);
     }
+
+    return data;
 }

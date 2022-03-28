@@ -14,6 +14,7 @@ Table::Table(std::string name) : name(std::move(name))
 
     int number;
     std::string input;
+    data.clear();
     while (true)
     {
         std::cout << "Enter the number of columns: ";
@@ -31,8 +32,9 @@ Table::Table(std::string name) : name(std::move(name))
         std::cout << "Invalid number\n";
     }
 
-    columns.reserve(number + 1);
-    columns.insert({ "id", "ID" });
+    std::vector<std::string> row;
+    row.reserve(number + 1);
+    row.emplace_back("id:ID");
     int i = 1;
     while (i <= number)
     {
@@ -61,27 +63,33 @@ Table::Table(std::string name) : name(std::move(name))
         }
         // replace all spaces with dashes
         std::replace(columnName.begin(), columnName.end(), ' ', '-');
-        columns.insert({ columnName, type });
+        columnName += ":" + type;
+        row.push_back(columnName);
     }
+    data.push_back(row);
     std::cout << std::endl;
 }
+
+Table::Table(std::string name, const Data& _data) : name(std::move(name))
+{
+    if (_data.empty()) throw std::exception("The data must at least have the column names");
+    data = _data;
+    std::string lastId = _data.back().at(0);
+    ID::SetLastID(std::stoi(lastId));
+}
+
+const std::string& Table::GetName() const { return name; }
 
 void Table::Save() const
 {
     CSVFile file(name);
-    Data tmpData;
-    tmpData.reserve(data.size() + 1);
-    std::vector<std::string> row;
-    for (const auto& it: columns) row.push_back(it.first + ":" + it.second);
-    tmpData.push_back(row);
-    tmpData.insert(tmpData.end(), data.begin(), data.end());
     file.CreateNewFile();
-    file.Save(tmpData);
-    file.Close();
+    file.Save(data);
 }
 
 void Table::Insert()
 {
+    const auto& columns = data.at(0);
     auto it = columns.begin();
     ++it;
     unsigned size = columns.size();
@@ -92,16 +100,18 @@ void Table::Insert()
     {
         while (true)
         {
-            std::cout << it->first << "(" << it->second << "): ";
+            unsigned index = it->find(":");
+            std::string type = it->substr(index + 1);
+            std::cout << it->substr(0, index) << "(" << type << "): ";
             std::string value;
             std::getline(std::cin, value);
             value = StringUtils::Trim(value);
             try
             {
                 if (value.empty()) throw std::exception();
-                if (it->second == "int") std::stoi(value); // throws exception if value not int
-                else if (it->second == "double") std::stod(value); // throws exception if value not double
-                // else the value is string
+                if (type == "int") std::stoi(value); // throws exception if value not int
+                else if (type == "double") std::stod(value); // throws exception if value not double
+                // else the value type is string
                 row.push_back(value);
                 break;
             } catch (...)
