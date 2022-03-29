@@ -31,6 +31,9 @@ public:
 
     // search table records and display results
     void SearchRecord() const;
+
+    // update record by id
+    void UpdateRecord(unsigned id);
 };
 
 

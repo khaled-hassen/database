@@ -19,12 +19,13 @@ int main()
         // db->CloseTable();
         // db->OpenTable("table1");
         db->OpenTable("table2");
-        db->GetTable()->SearchRecord();
+        // db->GetTable()->SearchRecord();
+        db->GetTable()->UpdateRecord(5);
+        db->GetTable()->Save();
+        db->CloseTable();
         // db->GetTable()->ShowRecords();
         // db->GetTable()->InsertRecord();
         // db->GetTable()->DeleteRecord(2);
-        // db->GetTable()->Save();
-        // db->CloseTable();
         // db->OpenTable("table2");
         // db->GetTable()->ShowRecords();
         // db->ShowTables();
