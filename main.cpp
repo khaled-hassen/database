@@ -1,7 +1,7 @@
 #include <iostream>
-#include "libs/CLI/CLI.h"
-#include "libs/Utils/Pointer/Pointer.h"
-#include "libs/Database/Database.h"
+#include "src/CLI/CLI.h"
+#include "src/Utils/Pointer/Pointer.h"
+#include "src/Database/Database.h"
 
 int main()
 {

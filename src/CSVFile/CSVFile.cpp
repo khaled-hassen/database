@@ -1,7 +1,7 @@
 #include "CSVFile.h"
-#include <cstdio>
 #include <sstream>
 #include <utility>
+#include <filesystem>
 
 CSVFile::CSVFile(std::string filename) : filename(std::move(filename)) { }
 
@@ -18,7 +18,7 @@ void CSVFile::Close() { if (file.is_open()) file.close(); }
 void CSVFile::Delete()
 {
     Close();
-    int result = std::remove(filename.c_str());
+    bool result = std::filesystem::remove(filename);
     // failed to delete
     if (result) throw std::exception("Fail doesn't exist");
 }
