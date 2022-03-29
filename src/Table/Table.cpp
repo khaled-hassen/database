@@ -128,5 +128,57 @@ void Table::ShowRecords() const
 
 void Table::DeleteRecord(unsigned id)
 {
-    // std::find_if(data.begin(), data.end(), [](const Record& record) { return record.at(0); })
+    auto it = std::find_if(data.begin(), data.end(),
+                           [id](const Record& record) { return record.at("id") == std::to_string(id); });
+    if (it == data.end()) throw std::exception("This record doesn't exit");
+    data.erase(it);
+}
+
+void Table::SearchRecord() const
+{
+    std::string colNames = "( ";
+    for (const auto& col: columns) colNames += col + ", ";
+    colNames = colNames.substr(0, colNames.size() - 2) + " )";
+
+    std::string col;
+    while (true)
+    {
+        std::cout << "Enter column to search by " << colNames << ": ";
+        std::getline(std::cin, col);
+        col = StringUtils::Trim(col);
+        try
+        {
+            if (col.empty()) throw std::exception();
+            // column doesn't exist
+            if (colNames.find(col) == std::string::npos) throw std::exception();
+            break;
+        } catch (...)
+        { std::cout << "Invalid column\n"; }
+
+    }
+
+    std::string value;
+    while (true)
+    {
+        std::cout << "Enter value to search for: ";
+        std::getline(std::cin, value);
+        value = StringUtils::Trim(value);
+        try
+        {
+            if (value.empty()) throw std::exception();
+            break;
+        } catch (...)
+        { std::cout << "Invalid column\n"; }
+    }
+
+    bool found = false;
+    for (const auto& record: data)
+    {
+        if (record.at(col) == value)
+        {
+            found = true;
+            for (const auto& it: record) std::cout << it.first << ":" << it.second << "\n";
+        }
+    }
+    if (!found) std::cout << "No record found" << std::endl;
 }

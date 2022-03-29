@@ -28,6 +28,9 @@ public:
 
     // delete a record by id from table
     void DeleteRecord(unsigned id);
+
+    // search table records and display results
+    void SearchRecord() const;
 };
 
 
