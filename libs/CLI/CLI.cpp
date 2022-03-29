@@ -12,14 +12,14 @@ void CLI::showHelp()
               << "\t- create db <db-name>: Create a new database \n"
               << "\t- drop db: delete the opened database\n"
               << "\t- close db: Close the opened database\n"
-              << "\t- Show db: display all the table names in the database\n"
+              << "\t- ShowRecords db: display all the table names in the database\n"
               << "\t- open table <table-name>: Open a table\n"
               << "\t- create table <table-name>: Create a new table\n"
               << "\t- drop table: delete the opened table\n"
               << "\t- search table <condition>: search table records based on the condition\n"
               << "\t- save table: save the changes in the opened table\n"
               << "\t- close table: close the opened table\n"
-              << "\t- Show table: display all the records in the table\n"
+              << "\t- ShowRecords table: display all the records in the table\n"
               << "\t- insert record <column-1> <column-2> ... <column-n>: insert a new record in the opened table\n"
               << "\t- update record <record-id> <column-name> <new-value>...: update record\n"
               << "\t- drop record <record-id>: delete record"
@@ -69,7 +69,7 @@ void CLI::execute()
         else if (action == "Create") std::cout << "creating db" << std::endl;
         else if (action == "drop") std::cout << "dropping" << std::endl;
         else if (action == "Close") std::cout << "closing db" << std::endl;
-        else if (action == "Show") std::cout << "showing db" << std::endl;
+        else if (action == "ShowRecords") std::cout << "showing db" << std::endl;
         else throw std::exception("Invalid command");
     }
     else if (target == "table")
@@ -80,7 +80,7 @@ void CLI::execute()
         else if (action == "save") std::cout << "saving table" << std::endl;
         else if (action == "Close") std::cout << "closing table" << std::endl;
         else if (action == "search") std::cout << "searching table" << std::endl;
-        else if (action == "Show") std::cout << "showing table" << std::endl;
+        else if (action == "ShowRecords") std::cout << "showing table" << std::endl;
         else throw std::exception("Invalid command");
     }
     else if (target == "record")

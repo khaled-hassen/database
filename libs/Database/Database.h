@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 #include "../Utils/Pointer/Pointer.h"
-
-class Table;
+#include "../Table/Table.h"
 
 class Database
 {
@@ -54,23 +53,14 @@ public:
     // open a table
     void OpenTable(const std::string& tableName);
 
+    // get the opened table. Throw an error when no table is opened
+    [[nodiscard]] const Pointer<Table>& GetTable() const;
+
     // close the opened table
     void CloseTable();
 
-    // save the opened table to disk
-    void SaveTable();
-
-    // insert a new record in the opened table
-    void InsertRecord();
-
     // delete table. if tableName is provided delete tableName else delete the opened table
     void DropTable(const std::string& tableName = "");
-
-    // display the data in the opened table
-    void ShowTable() const;
-
-    // delete a record from opened table
-    void DeleteRecord(unsigned id);
 };
 
 

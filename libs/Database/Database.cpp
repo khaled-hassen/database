@@ -1,5 +1,4 @@
 #include "Database.h"
-#include "../Table/Table.h"
 #include "../CSVFile/CSVFile.h"
 #include <filesystem>
 #include <iostream>
@@ -116,6 +115,12 @@ void Database::OpenTable(const std::string& tableName)
     table = Pointer(new Table(filename, columns, data));
 }
 
+const Pointer<Table>& Database::GetTable() const
+{
+    CheckOpenedTable();
+    return table;
+}
+
 void Database::CheckOpenedTable() const
 {
     CheckOpenedDb();
@@ -136,25 +141,12 @@ void Database::CloseTable()
     table = Pointer<Table>::GetNull();
 }
 
-void Database::SaveTable()
-{
-    CheckOpenedDb();
-    table->Save();
-}
-
-void Database::InsertRecord()
-{
-    CheckOpenedTable();
-    table->Insert();
-}
-
 void Database::DropTable(const std::string& tableName)
 {
     // delete the opened table
     if (tableName.empty())
     {
-        CheckOpenedTable();
-        std::string name = table->GetName();
+        std::string name = GetTable()->GetName();
         table = Pointer<Table>::GetNull();
         // remove the tableName from the tableNames vector
         tableNames.erase(std::remove(tableNames.begin(), tableNames.end(), name), tableNames.end());
@@ -172,14 +164,3 @@ void Database::DropTable(const std::string& tableName)
     file.Delete();
 }
 
-void Database::ShowTable() const
-{
-    CheckOpenedTable();
-    table->Show();
-}
-
-void Database::DeleteRecord(unsigned id)
-{
-    CheckOpenedTable();
-    table->DeleteRecord(id);
-}

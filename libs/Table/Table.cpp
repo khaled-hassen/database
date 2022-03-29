@@ -82,7 +82,7 @@ void Table::Save() const
     file.Save(columns, data);
 }
 
-void Table::Insert()
+void Table::InsertRecord()
 {
     auto it = columns.begin();
     ++it;
@@ -117,7 +117,7 @@ void Table::Insert()
     data.push_back(record);
 }
 
-void Table::Show() const
+void Table::ShowRecords() const
 {
     for (const auto& record: data)
     {

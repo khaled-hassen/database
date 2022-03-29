@@ -9,13 +9,12 @@ class Pointer
 private:
     T* ptr = nullptr;
 
-
 private:
     // free memory allocated by the pointer
     void Destroy() { delete ptr; }
 
 public:
-    // create an empty pointer
+    // create an empty Pointer<T> object
     static Pointer<T> GetNull() { return Pointer(); }
 
     Pointer() : ptr(nullptr) { }

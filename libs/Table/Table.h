@@ -21,10 +21,10 @@ public:
     void Save() const;
 
     // insert a new row to table
-    void Insert();
+    void InsertRecord();
 
     // display the data in the table
-    void Show() const;
+    void ShowRecords() const;
 
     // delete a record by id from table
     void DeleteRecord(unsigned id);
