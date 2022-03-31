@@ -16,6 +16,8 @@ public:
     StringUtils() = delete;
 
     static std::string Trim(const std::string& str);
+
+    static void Replace(std::string& str, char val, char by);
 };
 
 

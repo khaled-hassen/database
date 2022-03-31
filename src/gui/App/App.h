@@ -2,7 +2,7 @@
 
 #include "../wxwidgets.h"
 
-class App: public wxApp
+class App : public wxApp
 {
 public:
     bool OnInit() override;

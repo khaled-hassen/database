@@ -30,6 +30,9 @@ private:
     std::vector<std::string>::iterator GetDbTable(const std::string& tableName);
 
 public:
+    // scan the exe folder for available databases
+    static std::vector<std::string> ScanForDatabases();
+
     Database() = default;
 
     // create and open the database

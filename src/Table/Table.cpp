@@ -59,7 +59,7 @@ Table::Table(std::string name) : name(std::move(name))
             std::cout << "Invalid data type\n";
         }
         // replace all spaces with dashes
-        std::replace(columnName.begin(), columnName.end(), ' ', '-');
+        StringUtils::Replace(columnName, ' ', '-');
         columnName += ":" + type;
         columns.push_back(columnName);
     }

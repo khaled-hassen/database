@@ -1,4 +1,5 @@
 #include "StringUtils.h"
+#include <algorithm>
 
 std::string StringUtils::WHITESPACE = " \n\t";
 
@@ -17,4 +18,9 @@ std::string StringUtils::RightTrim(const std::string& str)
 std::string StringUtils::Trim(const std::string& str)
 {
     return LeftTrim(RightTrim(str));
+}
+
+void StringUtils::Replace(std::string& str, char val, char by)
+{
+    std::replace(str.begin(), str.end(), val, by);
 }

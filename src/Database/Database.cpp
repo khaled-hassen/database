@@ -1,5 +1,6 @@
 #include "Database.h"
 #include "../CSVFile/CSVFile.h"
+#include "../Utils/String/StringUtils.h"
 #include <filesystem>
 #include <iostream>
 #include <algorithm>
@@ -7,8 +8,22 @@
 namespace fs = std::filesystem;
 std::string Database::BASE_NAME = "databases/";
 
+std::vector<std::string> Database::ScanForDatabases()
+{
+    if (!fs::exists(BASE_NAME)) return std::vector<std::string>(0);
+
+    std::vector<std::string> paths;
+    for (const auto& entry: fs::directory_iterator(BASE_NAME))
+        paths.push_back(entry.path().string().erase(0, BASE_NAME.length()));
+
+
+    return paths;
+}
+
 void Database::CreateDb(const std::string& _dbName)
 {
+    if (!dbName.empty()) throw std::exception("There is an opened database, close it before creating a new one");
+
     if (!fs::exists(BASE_NAME))
     {
         bool success = fs::create_directory(BASE_NAME);
@@ -38,7 +53,7 @@ void Database::LoadTablesNames()
         {
             std::string path = file.string();
             // Windows uses \ in path instead of /
-            std::replace(path.begin(), path.end(), '\\', '/');
+            StringUtils::Replace(path, '\\', '/');
             tableNames.push_back(path);
         }
     }
@@ -163,4 +178,3 @@ void Database::DropTable(const std::string& tableName)
     CSVFile file(filename);
     file.Delete();
 }
-
