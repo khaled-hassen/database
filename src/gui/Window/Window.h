@@ -9,16 +9,18 @@ private:
     Pointer<Database> db;
 
 public:
-    Window(const wxString& name, const wxSize& size);
+    Window(const wxString& title, const wxSize& size);
 
 private:
     // handle close event
     void OnExit(wxCommandEvent& event);
 
-    void OnListItemSelected(class wxListEvent& event);
+    void OnOpenDB(wxCommandEvent& event);
+
+    void OnCreateDB(wxCommandEvent& event);
 
     // for binding events (must be at the end of the class: may change class visibility)
-    DECLARE_EVENT_TABLE()
+DECLARE_EVENT_TABLE()
 };
 
 

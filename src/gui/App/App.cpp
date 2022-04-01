@@ -10,3 +10,12 @@ bool App::OnInit()
     window->Show(true);
     return true;
 }
+
+bool App::OnExceptionInMainLoop()
+{
+    try
+    { throw; }
+    catch (std::exception& e)
+    { wxMessageBox(e.what(), "Error", wxICON_ERROR); }
+    return true;
+}

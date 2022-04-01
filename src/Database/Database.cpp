@@ -30,8 +30,9 @@ void Database::CreateDb(const std::string& _dbName)
         if (!success) throw std::exception("Can't create database");
     }
 
+    if (fs::exists(BASE_NAME + _dbName)) throw std::exception("Database exists");
+
     dbName = BASE_NAME + _dbName;
-    if (fs::exists(dbName)) throw std::exception("Database exists");
     bool success = fs::create_directory(dbName);
     if (!success) throw std::exception("Can't create database");
     LoadTablesNames();
@@ -39,6 +40,8 @@ void Database::CreateDb(const std::string& _dbName)
 
 void Database::OpenDb(const std::string& _dbName)
 {
+    if (!dbName.empty()) throw std::exception("There is an opened database, close it before creating a new one");
+
     CheckDbExists(_dbName);
     dbName = BASE_NAME + _dbName;
     LoadTablesNames();
