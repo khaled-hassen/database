@@ -1,5 +1,5 @@
 #include "DbCreationDialog.h"
-#include "../../Utils/String/StringUtils.h"
+#include "../../../Utils/String/StringUtils.h"
 
 BEGIN_EVENT_TABLE(DBCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, DBCreationDialog::OnCreate)
@@ -18,8 +18,8 @@ DBCreationDialog::DBCreationDialog(wxWindow* parent, wxWindowID id)
     mainSizer->Add(label);
     mainSizer->AddSpacer(GAP);
 
-    textCtrlValue = new wxTextCtrl(this, wxID_ANY);
-    mainSizer->Add(textCtrlValue, 0, wxEXPAND);
+    textCtrl = new wxTextCtrl(this, wxID_ANY);
+    mainSizer->Add(textCtrl, 0, wxEXPAND);
     mainSizer->AddSpacer(GAP);
 
     auto* btnSizer = CreateButtonSizer(wxOK | wxCANCEL);
@@ -35,9 +35,9 @@ const std::string& DBCreationDialog::GetDbName() const { return dbName; }
 
 void DBCreationDialog::OnCreate(wxCommandEvent& event)
 {
-    if (textCtrlValue)
+    if (textCtrl)
     {
-        dbName = StringUtils::Trim(textCtrlValue->GetValue().ToStdString());
+        dbName = StringUtils::Trim(textCtrl->GetValue().ToStdString());
         if (dbName.empty())
         {
             wxMessageBox("Database name is required", "Error", wxICON_ERROR);

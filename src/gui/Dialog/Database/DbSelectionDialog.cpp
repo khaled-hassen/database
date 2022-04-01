@@ -1,9 +1,9 @@
 #include "DbSelectionDialog.h"
-#include "../../Database/Database.h"
+#include "../../../Database/Database.h"
 #include <wx/msw/window.h>
 #include <wx/msw/dialog.h>
 #include <wx/listctrl.h>
-#include "../ID.h"
+#include "../../ID.h"
 
 BEGIN_EVENT_TABLE(DBSelectionDialog, wxDialog)
                 EVT_LIST_ITEM_SELECTED(ID::DB_LIST_VIEW, DBSelectionDialog::OnSelectItem)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../wxwidgets.h"
+#include "../../wxwidgets.h"
 #include <string>
 
 class DBCreationDialog : public wxDialog
@@ -8,7 +8,7 @@ class DBCreationDialog : public wxDialog
 private:
     std::string dbName;
 
-    wxTextCtrl* textCtrlValue = nullptr;
+    wxTextCtrl* textCtrl = nullptr;
 public:
     DBCreationDialog(wxWindow* parent, wxWindowID id);
 

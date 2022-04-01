@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../wxwidgets.h"
+#include "../../wxwidgets.h"
 #include <string>
 
 class DBSelectionDialog : public wxDialog

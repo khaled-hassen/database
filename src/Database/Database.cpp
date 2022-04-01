@@ -22,8 +22,7 @@ std::vector<std::string> Database::ScanForDatabases()
 
 void Database::CreateDb(const std::string& _dbName)
 {
-    if (!dbName.empty()) throw std::exception("There is an opened database, close it before creating a new one");
-
+    CloseDb();
     if (!fs::exists(BASE_NAME))
     {
         bool success = fs::create_directory(BASE_NAME);
@@ -40,8 +39,7 @@ void Database::CreateDb(const std::string& _dbName)
 
 void Database::OpenDb(const std::string& _dbName)
 {
-    if (!dbName.empty()) throw std::exception("There is an opened database, close it before creating a new one");
-
+    CloseDb();
     CheckDbExists(_dbName);
     dbName = BASE_NAME + _dbName;
     LoadTablesNames();
@@ -79,7 +77,7 @@ void Database::ShowTables() const
     {
         // prevent the extension and the full path from being printed
         // 4 is the size of ".csv"
-        unsigned start = entry.find_last_of("/");
+        std::string::size_type start = entry.find_last_of('/');
         start = start == std::string::npos ? 0 : start + 1;
         std::cout << "* " << entry.substr(start, entry.size() - start - 4) << "\n";
     }
@@ -89,7 +87,6 @@ void Database::ShowTables() const
 
 void Database::CloseDb()
 {
-    CheckOpenedDb();
     tableNames.clear();
     dbName = "";
     table = Pointer<Table>::GetNull();

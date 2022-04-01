@@ -24,5 +24,6 @@ TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const 
 void TableSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
 {
     if (tableList == nullptr) return;
+    tableList->DeleteAllItems(); // delete old names
     for (const auto& item: items) tableList->InsertItem(0, item);
 }
