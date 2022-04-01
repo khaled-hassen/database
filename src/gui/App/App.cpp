@@ -7,6 +7,7 @@ bool App::OnInit()
     if (!wxApp::OnInit()) return false;
     // deleting the pointer in the destructor crashes the program. wxWidgets will handle memory management
     auto* window = new Window("Database", wxSize(1000, 600));
+    window->SetMinSize(wxSize(800, 500));
     window->Show(true);
     return true;
 }

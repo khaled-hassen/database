@@ -1,8 +1,10 @@
 #include "Window.h"
 #include <wx/artprov.h>
 #include "../ID.h"
-#include "../Dialog/Database/DbSelectionDialog.h"
-#include "../Dialog/Database/DbCreationDialog.h"
+#include "../Dialog/DbSelectionDialog.h"
+#include "../Dialog/DbCreationDialog.h"
+#include "../Panel/TableSelectionPanel.h"
+#include "../Panel/RecordsViewPanel.h"
 
 // statically bind events to functions
 BEGIN_EVENT_TABLE(Window, wxFrame)
@@ -50,6 +52,17 @@ Window::Window(const wxString& title, const wxSize& size)
     toolbar->SetToolLongHelp(ID::NEW_TABLE, "Create a new table");
 
     toolbar->Realize();
+
+    // create viewport
+    auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    leftPanel = new TableSelectionPanel(this, wxID_ANY, wxSize(200, 0));
+    mainSizer->Add(leftPanel, 0, wxEXPAND);
+
+    rightPanel = new RecordsViewPanel(this, wxID_ANY);
+    mainSizer->Add(rightPanel, 1, wxEXPAND);
+
+    SetSizer(mainSizer);
 }
 
 void Window::OnExit(wxCommandEvent& event) { Close(true); }
@@ -59,7 +72,11 @@ void Window::OnOpenDB(wxCommandEvent& event)
     auto* dialog = new DBSelectionDialog(this, wxID_ANY);
     int id = dialog->ShowModal();
 
-    if (id == wxID_OK) db->OpenDb(dialog->GetDbName());
+    if (id == wxID_OK)
+    {
+        db->OpenDb(dialog->GetDbName());
+        ShowTablesList();
+    }
     dialog->Destroy();
 }
 
@@ -68,6 +85,16 @@ void Window::OnCreateDB(wxCommandEvent& event)
     auto* dialog = new DBCreationDialog(this, wxID_ANY);
     int id = dialog->ShowModal();
 
-    if (id == wxID_OK) db->CreateDb(dialog->GetDbName());
+    if (id == wxID_OK)
+    {
+        db->CreateDb(dialog->GetDbName());
+        ShowTablesList();
+    }
     dialog->Destroy();
+}
+
+void Window::ShowTablesList()
+{
+    const std::vector<std::string>& tables = db->GetTableNames();
+    if (leftPanel) leftPanel->ShowTablesList(tables);
 }

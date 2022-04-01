@@ -95,6 +95,20 @@ void Database::CloseDb()
     table = Pointer<Table>::GetNull();
 }
 
+std::vector<std::string> Database::GetTableNames() const
+{
+    CheckOpenedDb();
+    std::vector<std::string> names;
+    names.reserve(tableNames.size());
+    for (const auto& name: tableNames)
+    {
+        unsigned start = name.find_last_of('/') + 1;
+        unsigned end = name.find(".csv") - start;
+        names.push_back(name.substr(start, end));
+    }
+    return names;
+}
+
 void Database::DropDb(const std::string& _dbName)
 {
     if (_dbName.empty())
@@ -181,3 +195,4 @@ void Database::DropTable(const std::string& tableName)
     CSVFile file(filename);
     file.Delete();
 }
+

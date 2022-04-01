@@ -1,12 +1,13 @@
 #include "DbSelectionDialog.h"
-#include "../../../Database/Database.h"
+#include "../../Database/Database.h"
 #include <wx/msw/window.h>
 #include <wx/msw/dialog.h>
 #include <wx/listctrl.h>
+#include "../ID.h"
 
 BEGIN_EVENT_TABLE(DBSelectionDialog, wxDialog)
-                EVT_LIST_ITEM_SELECTED(wxID_VIEW_LIST, DBSelectionDialog::OnSelectItem)
-                EVT_LIST_ITEM_ACTIVATED(wxID_VIEW_LIST, DBSelectionDialog::OnItemSelected)
+                EVT_LIST_ITEM_SELECTED(ID::DB_LIST_VIEW, DBSelectionDialog::OnSelectItem)
+                EVT_LIST_ITEM_ACTIVATED(ID::DB_LIST_VIEW, DBSelectionDialog::OnItemSelected)
 END_EVENT_TABLE()
 
 
@@ -16,7 +17,7 @@ DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id)
 {
     auto* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    auto* databasesList = new wxListView(this, wxID_VIEW_LIST);
+    auto* databasesList = new wxListView(this, ID::DB_LIST_VIEW);
     databasesList->SetSingleStyle(wxLC_SINGLE_SEL); // to prevent multi selection
 
     databasesList->AppendColumn("Available Databases");

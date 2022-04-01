@@ -1,4 +1,5 @@
 #include "DbCreationDialog.h"
+#include "../../Utils/String/StringUtils.h"
 
 BEGIN_EVENT_TABLE(DBCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, DBCreationDialog::OnCreate)
@@ -34,9 +35,9 @@ const std::string& DBCreationDialog::GetDbName() const { return dbName; }
 
 void DBCreationDialog::OnCreate(wxCommandEvent& event)
 {
-    if (textCtrlValue != nullptr)
+    if (textCtrlValue)
     {
-        dbName = textCtrlValue->GetValue().ToStdString();
+        dbName = StringUtils::Trim(textCtrlValue->GetValue().ToStdString());
         if (dbName.empty())
         {
             wxMessageBox("Database name is required", "Error", wxICON_ERROR);

@@ -7,11 +7,15 @@ class Window : public wxFrame
 {
 private:
     Pointer<Database> db;
+    class TableSelectionPanel* leftPanel = nullptr;
+    class RecordsViewPanel* rightPanel = nullptr;
 
 public:
     Window(const wxString& title, const wxSize& size);
 
 private:
+    void ShowTablesList();
+
     // handle close event
     void OnExit(wxCommandEvent& event);
 

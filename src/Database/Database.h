@@ -44,6 +44,8 @@ public:
     // close the opened database
     void CloseDb();
 
+    [[nodiscard]] std::vector<std::string> GetTableNames() const;
+
     // display the database tables
     void ShowTables() const;
 
