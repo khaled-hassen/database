@@ -6,19 +6,19 @@
 class Window : public wxFrame
 {
 private:
+    bool isTableToolAdded = false;
     Pointer<Database> db;
+    wxToolBar* toolbar = nullptr;
 
     class TableSelectionPanel* leftPanel = nullptr;
 
     class RecordsViewPanel* rightPanel = nullptr;
 
-    wxToolBar* toolbar = nullptr;
-
 public:
     Window(const wxString& title, const wxSize& size);
 
 private:
-    void UpdateUI(bool isOpeningDb = false);
+    void UpdateUI();
 
     // handle close event
     void OnExit(wxCommandEvent& event);
@@ -26,6 +26,8 @@ private:
     void OnOpenDB(wxCommandEvent& event);
 
     void OnCreateDB(wxCommandEvent& event);
+
+    void OnDropDB(wxCommandEvent& event);
 
     void OnCreateTable(wxCommandEvent& event);
 

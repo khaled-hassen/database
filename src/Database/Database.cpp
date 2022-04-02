@@ -92,6 +92,12 @@ void Database::CloseDb()
     table = Pointer<Table>::GetNull();
 }
 
+std::string Database::GetDbName() const
+{
+    unsigned start = dbName.find('/') + 1;
+    return dbName.substr(start);
+}
+
 std::vector<std::string> Database::GetTableNames() const
 {
     CheckOpenedDb();
@@ -108,19 +114,10 @@ std::vector<std::string> Database::GetTableNames() const
 
 void Database::DropDb(const std::string& _dbName)
 {
-    if (_dbName.empty())
-    {
-        // delete the opened db
-        std::string tmp = dbName;
-        CloseDb();
-        fs::remove_all(tmp);
-    }
-    else
-    {
-        // delete the provided _dbName
-        CheckDbExists(_dbName);
-        fs::remove_all(BASE_NAME + _dbName);
-    }
+    const std::string& tmp = BASE_NAME + _dbName;
+    if (tmp == dbName) CloseDb(); // close the opened database if it's getting deleted
+    else CheckDbExists(_dbName);
+    fs::remove_all(tmp);
 }
 
 void Database::CreateTable(const std::string& tableName, const Columns& cols)

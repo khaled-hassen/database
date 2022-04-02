@@ -6,6 +6,7 @@ namespace ID
     {
         NEW_DB = wxID_NEW,
         OPEN_DB = wxID_OPEN,
+        DROP_DB = wxID_DELETE,
         DB_LIST_VIEW = wxID_VIEW_LIST,
         NEW_TABLE = wxID_HIGHEST + 1,
         OPEN_TABLE = NEW_TABLE + 1,

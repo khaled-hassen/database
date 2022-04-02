@@ -9,7 +9,7 @@ private:
     std::string dbName;
 
 public:
-    DBSelectionDialog(wxWindow* parent, wxWindowID id);
+    DBSelectionDialog(wxWindow* parent, wxWindowID id, const wxString& title);
 
     [[nodiscard]] const std::string& GetDbName() const;
 

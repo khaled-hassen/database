@@ -11,8 +11,8 @@ BEGIN_EVENT_TABLE(DBSelectionDialog, wxDialog)
 END_EVENT_TABLE()
 
 
-DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id)
-        : wxDialog(parent, id, "Open database", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE,
+DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id, const wxString& title)
+        : wxDialog(parent, id, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE,
                    wxDialogNameStr)
 {
     auto* mainSizer = new wxBoxSizer(wxVERTICAL);

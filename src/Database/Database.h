@@ -44,13 +44,15 @@ public:
     // close the opened database
     void CloseDb();
 
+    [[nodiscard]] std::string GetDbName() const;
+
     [[nodiscard]] std::vector<std::string> GetTableNames() const;
 
     // display the database tables
     void ShowTables() const;
 
-    // delete database. if _dbName name is provided delete _dbName database else delete the opened database
-    void DropDb(const std::string& _dbName = "");
+    // delete database
+    void DropDb(const std::string& _dbName);
 
     // create a new database table
     void CreateTable(const std::string& tableName, const Columns& cols);
