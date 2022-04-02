@@ -71,7 +71,7 @@ void Window::OnOpenDB(wxCommandEvent& event)
     if (id == wxID_OK)
     {
         db->OpenDb(dialog->GetDbName());
-        UpdateUI();
+        UpdateUI(true);
     }
     dialog->Destroy();
 }
@@ -84,21 +84,24 @@ void Window::OnCreateDB(wxCommandEvent& event)
     if (id == wxID_OK)
     {
         db->CreateDb(dialog->GetDbName());
-        UpdateUI();
+        UpdateUI(true);
     }
     dialog->Destroy();
 }
 
-void Window::UpdateUI()
+void Window::UpdateUI(bool isOpeningDb)
 {
-    // add tool for table
-    toolbar->AddTool(ID::NEW_TABLE, "New Table", wxArtProvider::GetBitmap("wxART_NEW"));
-    toolbar->SetToolLongHelp(ID::NEW_TABLE, "Create a new table");
-    toolbar->Realize();
+    if (isOpeningDb)
+    {
+        // add tool for table
+        toolbar->AddTool(ID::NEW_TABLE, "New Table", wxArtProvider::GetBitmap("wxART_NEW"));
+        toolbar->SetToolLongHelp(ID::NEW_TABLE, "Create a new table");
+        toolbar->Realize();
 
-    wxMenu* menu = GetMenuBar()->GetMenu(0);
-    menu->InsertSeparator(2);
-    menu->Insert(3, ID::NEW_TABLE, "&Create table \tCtrl-T", "Create a new table");
+        wxMenu* menu = GetMenuBar()->GetMenu(0);
+        menu->InsertSeparator(2);
+        menu->Insert(3, ID::NEW_TABLE, "&Create table \tCtrl-T", "Create a new table");
+    }
 
     const std::vector<std::string>& tables = db->GetTableNames();
     if (leftPanel) leftPanel->ShowTablesList(tables);
@@ -112,7 +115,8 @@ void Window::OnCreateTable(wxCommandEvent& event)
 
     if (id == wxID_OK)
     {
-
+        db->CreateTable(dialog->GetTableName(), dialog->GetColumns());
+        UpdateUI();
     }
     dialog->Destroy();
 }

@@ -53,7 +53,7 @@ public:
     void DropDb(const std::string& _dbName = "");
 
     // create a new database table
-    void CreateTable(const std::string& tableName);
+    void CreateTable(const std::string& tableName, const Columns& cols);
 
     // open a table
     void OpenTable(const std::string& tableName);

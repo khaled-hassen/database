@@ -11,7 +11,7 @@ private:
     Data data;
 
 public:
-    explicit Table(std::string name);
+    Table(std::string name, Columns columns);
 
     Table(std::string name, Columns columns, const Data& data);
 

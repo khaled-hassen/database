@@ -123,13 +123,15 @@ void Database::DropDb(const std::string& _dbName)
     }
 }
 
-void Database::CreateTable(const std::string& tableName)
+void Database::CreateTable(const std::string& tableName, const Columns& cols)
 {
     CheckOpenedDb();
     std::string filename = dbName + "/" + tableName + ".csv";
     if (fs::exists(filename)) throw std::exception("Table exists");
 
-    table = Pointer(new Table(filename));
+    table = Pointer(new Table(filename, cols));
+    table->Save();
+    tableNames.push_back(tableName);
 }
 
 void Database::OpenTable(const std::string& tableName)

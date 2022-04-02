@@ -6,65 +6,7 @@
 #include <utility>
 #include <algorithm>
 
-Table::Table(std::string name) : name(std::move(name))
-{
-    std::cout << "Creating table. Available data types: string, int, double \n";
-
-    int number;
-    std::string input;
-    columns.clear();
-    while (true)
-    {
-        std::cout << "Enter the number of columns: ";
-        std::getline(std::cin, input);
-        input = StringUtils::Trim(input);
-        try
-        {
-            number = std::stoi(input);
-        } catch (...)
-        {
-            std::cout << "Invalid number\n";
-            continue;
-        }
-        if (number > 0) break;
-        std::cout << "Invalid number\n";
-    }
-
-    columns.reserve(number + 1);
-    columns.emplace_back("id:ID");
-    int i = 1;
-    while (i <= number)
-    {
-        std::cout << "Column" << i << " name: ";
-        std::string columnName;
-        std::getline(std::cin, columnName);
-        columnName = StringUtils::Trim(columnName);
-        if (columnName.empty())
-        {
-            std::cout << "Enter a column name\n";
-            continue;
-        }
-
-        std::string type;
-        while (true)
-        {
-            std::cout << "Column" << i << " data type: ";
-            std::getline(std::cin, type);
-            type = StringUtils::Trim(type);
-            if (type == "string" || type == "int" || type == "double")
-            {
-                ++i;
-                break;
-            }
-            std::cout << "Invalid data type\n";
-        }
-        // replace all spaces with dashes
-        StringUtils::Replace(columnName, ' ', '-');
-        columnName += ":" + type;
-        columns.push_back(columnName);
-    }
-    std::cout << std::endl;
-}
+Table::Table(std::string name, Columns columns) : name(std::move(name)), columns(std::move(columns)) { }
 
 Table::Table(std::string name, Columns columns, const Data& data) : name(std::move(name)), columns(std::move(columns)),
                                                                     data(data)
@@ -186,7 +128,7 @@ void Table::SearchRecord() const
 void Table::UpdateRecord(unsigned int id)
 {
     auto record = std::find_if(data.begin(), data.end(),
-                           [id](const Record& record) { return record.at("id") == std::to_string(id); });
+                               [id](const Record& record) { return record.at("id") == std::to_string(id); });
     if (record == data.end()) throw std::exception("This record doesn't exit");
 
     auto it = columns.begin();

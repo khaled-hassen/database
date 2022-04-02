@@ -18,7 +18,7 @@ public:
     Window(const wxString& title, const wxSize& size);
 
 private:
-    void UpdateUI();
+    void UpdateUI(bool isOpeningDb = false);
 
     // handle close event
     void OnExit(wxCommandEvent& event);

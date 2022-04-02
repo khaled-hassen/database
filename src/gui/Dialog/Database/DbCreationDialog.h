@@ -7,7 +7,6 @@ class DBCreationDialog : public wxDialog
 {
 private:
     std::string dbName;
-
     wxTextCtrl* textCtrl = nullptr;
 public:
     DBCreationDialog(wxWindow* parent, wxWindowID id);
