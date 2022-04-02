@@ -6,20 +6,32 @@
 #include <utility>
 #include <algorithm>
 
-Table::Table(std::string name, Columns columns) : name(std::move(name)), columns(std::move(columns)) { }
+Table::Table(std::string path, Columns columns) : path(std::move(path)), columns(std::move(columns))
+{
+    unsigned start = this->path.find_last_of('/') + 1;
+    unsigned end = this->path.find(".csv") - start;
+    name = this->path.substr(start, end);
+}
 
-Table::Table(std::string name, Columns columns, const Data& data) : name(std::move(name)), columns(std::move(columns)),
+Table::Table(std::string path, Columns columns, const Data& data) : path(std::move(path)), columns(std::move(columns)),
                                                                     data(data)
 {
+    unsigned start = this->path.find_last_of('/') + 1;
+    unsigned end = this->path.find(".csv") - start;
+    name = this->path.substr(start, end);
+
+    if (data.empty()) return;
     std::string lastId = data.back().at("id");
     ID::SetLastID(std::stoi(lastId));
 }
+
+const std::string& Table::GetPath() const { return path; }
 
 const std::string& Table::GetName() const { return name; }
 
 void Table::Save() const
 {
-    CSVFile file(name);
+    CSVFile file(path);
     file.CreateNewFile();
     file.Save(columns, data);
 }

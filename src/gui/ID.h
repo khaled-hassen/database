@@ -11,6 +11,7 @@ namespace ID
         NEW_TABLE = wxID_HIGHEST + 1,
         OPEN_TABLE = NEW_TABLE + 1,
         TABLE_LIST_VIEW = OPEN_TABLE + 1,
-        ADD_ROW = TABLE_LIST_VIEW + 1
+        DROP_TABLE = TABLE_LIST_VIEW + 1,
+        ADD_ROW = DROP_TABLE + 1
     };
 }

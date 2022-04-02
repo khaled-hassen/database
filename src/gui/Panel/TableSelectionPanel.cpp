@@ -2,6 +2,10 @@
 #include <wx/listctrl.h>
 #include "../ID.h"
 
+BEGIN_EVENT_TABLE(TableSelectionPanel, wxPanel)
+                EVT_LIST_ITEM_ACTIVATED(ID::TABLE_LIST_VIEW, TableSelectionPanel::OnSelectTable)
+END_EVENT_TABLE()
+
 TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size)
         : wxPanel(parent, id, wxDefaultPosition, size, wxTAB_TRAVERSAL, wxPanelNameStr)
 {
@@ -27,3 +31,14 @@ void TableSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
     tableList->DeleteAllItems(); // delete old names
     for (const auto& item: items) tableList->InsertItem(0, item);
 }
+
+void TableSelectionPanel::OnSelectTable(wxListEvent& event)
+{
+    if (GetParent() == nullptr) return;
+
+    tableName = event.GetText();
+    wxCommandEvent ev(wxEVT_MENU, GetId());
+    wxPostEvent(GetParent(), ev);
+}
+
+const std::string& TableSelectionPanel::GetTableName() const { return tableName; }

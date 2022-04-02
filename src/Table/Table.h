@@ -6,14 +6,17 @@
 class Table
 {
 private:
+    std::string path;
     std::string name;
     Columns columns;
     Data data;
 
 public:
-    Table(std::string name, Columns columns);
+    Table(std::string path, Columns columns);
 
-    Table(std::string name, Columns columns, const Data& data);
+    Table(std::string path, Columns columns, const Data& data);
+
+    [[nodiscard]] const std::string& GetPath() const;
 
     [[nodiscard]] const std::string& GetName() const;
 

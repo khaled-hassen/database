@@ -14,6 +14,8 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
                 EVT_MENU(ID::NEW_DB, Window::OnCreateDB)
                 EVT_MENU(ID::DROP_DB, Window::OnDropDB)
                 EVT_MENU(ID::NEW_TABLE, Window::OnCreateTable)
+                EVT_MENU(ID::OPEN_TABLE, Window::OnOpenTable)
+                EVT_MENU(ID::DROP_TABLE, Window::OnDropTable)
 END_EVENT_TABLE()
 
 Window::Window(const wxString& title, const wxSize& size)
@@ -37,8 +39,9 @@ Window::Window(const wxString& title, const wxSize& size)
     wxFrame::SetMenuBar(menuBar);
 
     // create a status bar
-    wxFrame::CreateStatusBar();
-    wxFrame::SetStatusText("No database is opened");
+    wxFrame::CreateStatusBar(2);
+    wxFrame::SetStatusText("No database is opened", 0);
+    wxFrame::SetStatusText("", 1);
 
     // create the toolbar
     toolbar = wxFrame::CreateToolBar();
@@ -57,7 +60,7 @@ Window::Window(const wxString& title, const wxSize& size)
     // create viewport
     auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    leftPanel = new TableSelectionPanel(this, wxID_ANY, wxSize(200, 0));
+    leftPanel = new TableSelectionPanel(this, ID::OPEN_TABLE, wxSize(200, 0));
     mainSizer->Add(leftPanel, 0, wxEXPAND);
 
     rightPanel = new RecordsViewPanel(this, wxID_ANY);
@@ -117,17 +120,21 @@ void Window::UpdateUI()
     if (!isTableToolAdded)
     {
         // add tool for table
-        toolbar->AddTool(ID::NEW_TABLE, "New Table", wxArtProvider::GetBitmap("wxART_NEW"));
+        toolbar->AddTool(ID::NEW_TABLE, "Create Table", wxArtProvider::GetBitmap("wxART_NEW"));
         toolbar->SetToolLongHelp(ID::NEW_TABLE, "Create a new table");
+        toolbar->AddTool(ID::DROP_TABLE, "Delete Table", wxArtProvider::GetBitmap("wxART_CROSS_MARK"));
+        toolbar->SetToolLongHelp(ID::DROP_TABLE, "Delete the active table");
         toolbar->Realize();
 
         wxMenu* menu = GetMenuBar()->GetMenu(0);
-        menu->InsertSeparator(2);
-        menu->Insert(3, ID::NEW_TABLE, "&Create table \tCtrl-T", "Create a new table");
+        menu->InsertSeparator(3);
+        menu->Insert(4, ID::NEW_TABLE, "&Create table \tCtrl-Shift-N", "Create a new table");
+        menu->Insert(5, ID::DROP_TABLE, "&Delete table \tCtrl-Shift-X", "Delete the active table");
         isTableToolAdded = true;
     }
 
-    SetStatusText(wxString::Format("Opened database: %s", db->GetDbName().c_str()));
+    SetStatusText(wxString::Format("Opened database: %s", db->GetDbName().c_str()), 0);
+    wxFrame::SetStatusText("", 1);
     const std::vector<std::string>& tables = db->GetTableNames();
     if (leftPanel) leftPanel->ShowTablesList(tables);
 }
@@ -144,4 +151,24 @@ void Window::OnCreateTable(wxCommandEvent& event)
         UpdateUI();
     }
     dialog->Destroy();
+}
+
+void Window::OnOpenTable(wxCommandEvent& event)
+{
+    if (leftPanel == nullptr) return;
+    const std::string& tableName = leftPanel->GetTableName();
+    db->OpenTable(tableName);
+    SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
+    // TODO display the table data
+}
+
+void Window::OnDropTable(wxCommandEvent& event)
+{
+    const std::string& tableName = db->GetTable()->GetName();
+    const auto& message = wxString::Format("Are you sure you want to delete: %s ?", tableName.c_str());
+    auto* confirmDialog = new wxMessageDialog(this, message, "Delete table", wxYES | wxNO);
+    int confirmId = confirmDialog->ShowModal();
+    if (confirmId == wxID_YES) db->DropTable();
+    confirmDialog->Destroy();
+//     TODO update ui
 }

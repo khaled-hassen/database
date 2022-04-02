@@ -89,7 +89,7 @@ void Database::CloseDb()
 {
     tableNames.clear();
     dbName = "";
-    table = Pointer<Table>::GetNull();
+    CloseTable();
 }
 
 std::string Database::GetDbName() const
@@ -123,6 +123,7 @@ void Database::DropDb(const std::string& _dbName)
 void Database::CreateTable(const std::string& tableName, const Columns& cols)
 {
     CheckOpenedDb();
+    CloseTable();
     std::string filename = dbName + "/" + tableName + ".csv";
     if (fs::exists(filename)) throw std::exception("Table exists");
 
@@ -134,7 +135,7 @@ void Database::CreateTable(const std::string& tableName, const Columns& cols)
 void Database::OpenTable(const std::string& tableName)
 {
     CheckOpenedDb();
-    if (table != nullptr) throw std::exception("There is an open table, close it before opening a new one");
+    CloseTable();
     std::string filename = *GetDbTable(tableName);
     CSVFile file(filename);
     Columns columns;
@@ -163,32 +164,15 @@ std::vector<std::string>::iterator Database::GetDbTable(const std::string& table
     return it;
 }
 
-void Database::CloseTable()
+void Database::CloseTable() { table = Pointer<Table>::GetNull(); }
+
+void Database::DropTable()
 {
-    CheckOpenedTable();
+    std::string name = GetTable()->GetPath();
     table = Pointer<Table>::GetNull();
-}
-
-void Database::DropTable(const std::string& tableName)
-{
-    // delete the opened table
-    if (tableName.empty())
-    {
-        std::string name = GetTable()->GetName();
-        table = Pointer<Table>::GetNull();
-        // remove the tableName from the tableNames vector
-        tableNames.erase(std::remove(tableNames.begin(), tableNames.end(), name), tableNames.end());
-        CSVFile file(name);
-        file.Delete();
-        return;
-    }
-
-    CheckOpenedDb();
-    // delete the passed tableName
-    auto it = GetDbTable(tableName);
-    std::string filename = *it;
-    tableNames.erase(it);
-    CSVFile file(filename);
+    // remove the tableName from the tableNames vector
+    tableNames.erase(std::remove(tableNames.begin(), tableNames.end(), name), tableNames.end());
+    CSVFile file(name);
     file.Delete();
 }
 

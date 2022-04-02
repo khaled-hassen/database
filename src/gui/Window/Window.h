@@ -31,6 +31,10 @@ private:
 
     void OnCreateTable(wxCommandEvent& event);
 
+    void OnOpenTable(wxCommandEvent& event);
+
+    void OnDropTable(wxCommandEvent& event);
+
 // for binding events (must be at the end of the class: may change class visibility)
 DECLARE_EVENT_TABLE()
 };
