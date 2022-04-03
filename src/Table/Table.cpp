@@ -25,9 +25,9 @@ Table::Table(std::string path, Columns columns, const Data& data) : path(std::mo
     ID::SetLastID(std::stoi(lastId));
 }
 
-const std::string& Table::GetPath() const { return path; }
-
 const std::string& Table::GetName() const { return name; }
+
+const std::string& Table::GetPath() const { return path; }
 
 void Table::Save() const
 {

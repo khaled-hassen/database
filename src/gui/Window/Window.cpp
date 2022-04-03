@@ -136,9 +136,10 @@ void Window::UpdateUI()
     SetStatusText(wxString::Format("Opened database: %s", db->GetDbName().c_str()), 0);
     wxFrame::SetStatusText("", 1);
     const std::vector<std::string>& tables = db->GetTableNames();
+    wxString str;
+    for (const auto& it: tables) str += it + " ";
     if (leftPanel) leftPanel->ShowTablesList(tables);
 }
-
 
 void Window::OnCreateTable(wxCommandEvent& event)
 {
@@ -148,7 +149,9 @@ void Window::OnCreateTable(wxCommandEvent& event)
     if (id == wxID_OK)
     {
         db->CreateTable(dialog->GetTableName(), dialog->GetColumns());
+        const std::string& tableName = db->GetTable()->GetName();
         UpdateUI();
+        SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
     }
     dialog->Destroy();
 }
@@ -170,5 +173,5 @@ void Window::OnDropTable(wxCommandEvent& event)
     int confirmId = confirmDialog->ShowModal();
     if (confirmId == wxID_YES) db->DropTable();
     confirmDialog->Destroy();
-//     TODO update ui
+    UpdateUI();
 }

@@ -20,7 +20,7 @@ void CSVFile::Delete()
     Close();
     bool result = std::filesystem::remove(filename);
     // failed to delete
-    if (result) throw std::exception("Fail doesn't exist");
+    if (!result) throw std::exception("File doesn't exist");
 }
 
 

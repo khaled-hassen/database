@@ -10,6 +10,7 @@ class Database
 private:
     static std::string BASE_NAME;
     std::string dbName;
+    std::string dbPath;
     std::vector<std::string> tableNames;
     Pointer<Table> table;
 
@@ -26,8 +27,7 @@ private:
     // check if there's an opened table
     void CheckOpenedTable() const;
 
-    // return an iterator that points to the location of the tableName in tableNames. Throws an exception if tableName not in tableNames
-    std::vector<std::string>::iterator GetDbTable(const std::string& tableName);
+    [[nodiscard]] std::string CreateTablePath(const std::string& tableName) const;
 
 public:
     // scan the exe folder for available databases
@@ -44,9 +44,9 @@ public:
     // close the opened database
     void CloseDb();
 
-    [[nodiscard]] std::string GetDbName() const;
+    [[nodiscard]] const std::string& GetDbName() const;
 
-    [[nodiscard]] std::vector<std::string> GetTableNames() const;
+    [[nodiscard]] const std::vector<std::string>& GetTableNames() const;
 
     // display the database tables
     void ShowTables() const;
