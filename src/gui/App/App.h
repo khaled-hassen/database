@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../wxwidgets.h"
+#include "gui/wxwidgets.h"
 
 class App : public wxApp
 {

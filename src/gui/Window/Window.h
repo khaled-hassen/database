@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../wxwidgets.h"
-#include "../../Database/Database.h"
+#include "gui/wxwidgets.h"
+#include "Database/Database.h"
 
 class Window : public wxFrame
 {

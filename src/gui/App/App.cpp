@@ -1,5 +1,5 @@
 #include "App.h"
-#include "../Window/Window.h"
+#include "gui/Window/Window.h"
 
 bool App::OnInit()
 {

@@ -2,8 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "../Utils/Pointer/Pointer.h"
-#include "../Table/Table.h"
+#include "Utils/Pointer/Pointer.h"
+#include "Table/Table.h"
 
 class Database
 {

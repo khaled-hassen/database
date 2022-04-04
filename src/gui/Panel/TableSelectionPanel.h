@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../wxwidgets.h"
+#include "gui/wxwidgets.h"
 #include <string>
 #include <vector>
 

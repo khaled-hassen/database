@@ -1,11 +1,11 @@
 #include "TableCreationDialog.h"
-#include "../../../Utils/String/StringUtils.h"
-#include "../../ID.h"
+#include "Utils/String/StringUtils.h"
+#include "gui/wxWindowId.h"
 #include <wx/valtext.h>
 
 BEGIN_EVENT_TABLE(TableCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, TableCreationDialog::OnCreate)
-                EVT_BUTTON(ID::ADD_ROW, TableCreationDialog::OnAddDataRow)
+                EVT_BUTTON(wxWindowId::ADD_ROW, TableCreationDialog::OnAddDataRow)
 END_EVENT_TABLE()
 
 int TableCreationDialog::GAP = 20;
@@ -32,7 +32,7 @@ TableCreationDialog::TableCreationDialog(wxWindow* parent, wxWindowID id)
     m_MainSizer->Add(colLabel);
     m_MainSizer->AddSpacer(GAP / 2);
 
-    auto* addRowBtn = new wxButton(this, ID::ADD_ROW, "Add");
+    auto* addRowBtn = new wxButton(this, wxWindowId::ADD_ROW, "Add");
     m_MainSizer->Add(addRowBtn);
     m_MainSizer->AddSpacer(GAP);
 

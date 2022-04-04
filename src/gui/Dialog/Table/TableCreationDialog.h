@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../wxwidgets.h"
-#include "../../../Utils/types/types.h"
+#include "gui/wxwidgets.h"
+#include "Utils/types/types.h"
 #include <string>
 #include <vector>
 #include <array>

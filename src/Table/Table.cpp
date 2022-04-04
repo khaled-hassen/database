@@ -1,7 +1,7 @@
 #include "Table.h"
-#include "../Utils/ID/Id.h"
-#include "../CSVFile/CSVFile.h"
-#include "../Utils/String/StringUtils.h"
+#include "Utils/ID/Id.h"
+#include "CSVFile/CSVFile.h"
+#include "Utils/String/StringUtils.h"
 #include <iostream>
 #include <utility>
 #include <algorithm>

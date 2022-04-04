@@ -1,8 +1,8 @@
 #pragma once
 
-namespace ID
+namespace wxWindowId
 {
-    enum ID
+    enum wxWindowId
     {
         NEW_DB = wxID_NEW,
         OPEN_DB = wxID_OPEN,

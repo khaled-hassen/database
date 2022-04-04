@@ -1,5 +1,5 @@
 #include "DbCreationDialog.h"
-#include "../../../Utils/String/StringUtils.h"
+#include "Utils/String/StringUtils.h"
 
 BEGIN_EVENT_TABLE(DBCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, DBCreationDialog::OnCreate)

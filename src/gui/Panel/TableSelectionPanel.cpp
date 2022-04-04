@@ -1,9 +1,9 @@
 #include "TableSelectionPanel.h"
 #include <wx/listctrl.h>
-#include "../ID.h"
+#include "gui/wxWindowId.h"
 
 BEGIN_EVENT_TABLE(TableSelectionPanel, wxPanel)
-                EVT_LIST_ITEM_ACTIVATED(ID::TABLE_LIST_VIEW, TableSelectionPanel::OnSelectTable)
+                EVT_LIST_ITEM_ACTIVATED(wxWindowId::TABLE_LIST_VIEW, TableSelectionPanel::OnSelectTable)
 END_EVENT_TABLE()
 
 TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size)
@@ -13,7 +13,7 @@ TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const 
     wxPanel::SetBackgroundColour(color);
     auto* sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_TableList = new wxListView(this, ID::TABLE_LIST_VIEW);
+    m_TableList = new wxListView(this, wxWindowId::TABLE_LIST_VIEW);
     m_TableList->SetSingleStyle(wxLC_SINGLE_SEL);
     m_TableList->SetBackgroundColour(color);
     sizer->Add(m_TableList, 1, wxEXPAND);

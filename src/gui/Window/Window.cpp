@@ -1,21 +1,21 @@
 #include "Window.h"
 #include <wx/artprov.h>
-#include "../ID.h"
-#include "../Dialog/Database/DbSelectionDialog.h"
-#include "../Dialog/Database/DbCreationDialog.h"
-#include "../Panel/TableSelectionPanel.h"
-#include "../Panel/RecordsViewPanel.h"
-#include "../Dialog/Table/TableCreationDialog.h"
+#include "gui/wxWindowId.h"
+#include "gui/Dialog/Database/DbSelectionDialog.h"
+#include "gui/Dialog/Database/DbCreationDialog.h"
+#include "gui/Panel/TableSelectionPanel.h"
+#include "gui/Panel/RecordsViewPanel.h"
+#include "gui/Dialog/Table/TableCreationDialog.h"
 
 // statically bind events to functions
 BEGIN_EVENT_TABLE(Window, wxFrame)
                 EVT_MENU(wxID_EXIT, Window::OnExit)
-                EVT_MENU(ID::OPEN_DB, Window::OnOpenDB)
-                EVT_MENU(ID::NEW_DB, Window::OnCreateDB)
-                EVT_MENU(ID::DROP_DB, Window::OnDropDB)
-                EVT_MENU(ID::NEW_TABLE, Window::OnCreateTable)
-                EVT_MENU(ID::OPEN_TABLE, Window::OnOpenTable)
-                EVT_MENU(ID::DROP_TABLE, Window::OnDropTable)
+                EVT_MENU(wxWindowId::OPEN_DB, Window::OnOpenDB)
+                EVT_MENU(wxWindowId::NEW_DB, Window::OnCreateDB)
+                EVT_MENU(wxWindowId::DROP_DB, Window::OnDropDB)
+                EVT_MENU(wxWindowId::NEW_TABLE, Window::OnCreateTable)
+                EVT_MENU(wxWindowId::OPEN_TABLE, Window::OnOpenTable)
+                EVT_MENU(wxWindowId::DROP_TABLE, Window::OnDropTable)
 END_EVENT_TABLE()
 
 Window::Window(const wxString& title, const wxSize& size)
@@ -27,9 +27,9 @@ Window::Window(const wxString& title, const wxSize& size)
     // create the file menu
     auto* fileMenu = new wxMenu();
     // & underlines the first character, so it can be accessible via the ALT+F shortcut
-    fileMenu->Append(ID::OPEN_DB, "&Open database \tCtrl-O", "Open database");
-    fileMenu->Append(ID::NEW_DB, "&Create database \tCtrl-N", "Create a new database");
-    fileMenu->Append(ID::DROP_DB, "&Delete database \tCtrl-X", "Delete database");
+    fileMenu->Append(wxWindowId::OPEN_DB, "&Open database \tCtrl-O", "Open database");
+    fileMenu->Append(wxWindowId::NEW_DB, "&Create database \tCtrl-N", "Create a new database");
+    fileMenu->Append(wxWindowId::DROP_DB, "&Delete database \tCtrl-X", "Delete database");
     fileMenu->AppendSeparator();
     fileMenu->Append(wxID_EXIT, "&Quit \tCtrl-Q");
 
@@ -46,21 +46,21 @@ Window::Window(const wxString& title, const wxSize& size)
     // create the toolbar
     m_Toolbar = wxFrame::CreateToolBar();
 
-    m_Toolbar->AddTool(ID::OPEN_DB, "Open database", wxArtProvider::GetBitmap("wxART_FOLDER_OPEN"));
-    m_Toolbar->SetToolLongHelp(ID::OPEN_DB, "Open database");
+    m_Toolbar->AddTool(wxWindowId::OPEN_DB, "Open database", wxArtProvider::GetBitmap("wxART_FOLDER_OPEN"));
+    m_Toolbar->SetToolLongHelp(wxWindowId::OPEN_DB, "Open database");
 
-    m_Toolbar->AddTool(ID::NEW_DB, "New database", wxArtProvider::GetBitmap("wxART_NEW_DIR"));
-    m_Toolbar->SetToolLongHelp(ID::NEW_DB, "Create a new database");
+    m_Toolbar->AddTool(wxWindowId::NEW_DB, "New database", wxArtProvider::GetBitmap("wxART_NEW_DIR"));
+    m_Toolbar->SetToolLongHelp(wxWindowId::NEW_DB, "Create a new database");
 
-    m_Toolbar->AddTool(ID::DROP_DB, "Delete database", wxArtProvider::GetBitmap("wxART_DELETE"));
-    m_Toolbar->SetToolLongHelp(ID::DROP_DB, "Delete database");
+    m_Toolbar->AddTool(wxWindowId::DROP_DB, "Delete database", wxArtProvider::GetBitmap("wxART_DELETE"));
+    m_Toolbar->SetToolLongHelp(wxWindowId::DROP_DB, "Delete database");
 
     m_Toolbar->Realize();
 
     // create viewport
     auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_LeftPanel = new TableSelectionPanel(this, ID::OPEN_TABLE, wxSize(200, 0));
+    m_LeftPanel = new TableSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
     mainSizer->Add(m_LeftPanel, 0, wxEXPAND);
 
     m_RightPanel = new RecordsViewPanel(this, wxID_ANY);
@@ -120,16 +120,16 @@ void Window::UpdateUI()
     if (!m_IsTableToolAdded)
     {
         // add tool for table
-        m_Toolbar->AddTool(ID::NEW_TABLE, "Create Table", wxArtProvider::GetBitmap("wxART_NEW"));
-        m_Toolbar->SetToolLongHelp(ID::NEW_TABLE, "Create a new table");
-        m_Toolbar->AddTool(ID::DROP_TABLE, "Delete Table", wxArtProvider::GetBitmap("wxART_CROSS_MARK"));
-        m_Toolbar->SetToolLongHelp(ID::DROP_TABLE, "Delete the active table");
+        m_Toolbar->AddTool(wxWindowId::NEW_TABLE, "Create Table", wxArtProvider::GetBitmap("wxART_NEW"));
+        m_Toolbar->SetToolLongHelp(wxWindowId::NEW_TABLE, "Create a new table");
+        m_Toolbar->AddTool(wxWindowId::DROP_TABLE, "Delete Table", wxArtProvider::GetBitmap("wxART_CROSS_MARK"));
+        m_Toolbar->SetToolLongHelp(wxWindowId::DROP_TABLE, "Delete the active table");
         m_Toolbar->Realize();
 
         wxMenu* menu = GetMenuBar()->GetMenu(0);
         menu->InsertSeparator(3);
-        menu->Insert(4, ID::NEW_TABLE, "&Create table \tCtrl-Shift-N", "Create a new table");
-        menu->Insert(5, ID::DROP_TABLE, "&Delete table \tCtrl-Shift-X", "Delete the active table");
+        menu->Insert(4, wxWindowId::NEW_TABLE, "&Create table \tCtrl-Shift-N", "Create a new table");
+        menu->Insert(5, wxWindowId::DROP_TABLE, "&Delete table \tCtrl-Shift-X", "Delete the active table");
         m_IsTableToolAdded = true;
     }
 
