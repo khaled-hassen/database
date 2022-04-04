@@ -14,52 +14,52 @@ TableCreationDialog::TableCreationDialog(wxWindow* parent, wxWindowID id)
         : wxDialog(parent, id, "Create table", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE,
                    wxDialogNameStr)
 {
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    m_MainSizer = new wxBoxSizer(wxVERTICAL);
     const wxFont FONT = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
     auto* tableNameLabel = new wxStaticText(this, wxID_ANY, "Table name");
     tableNameLabel->SetFont(FONT);
-    mainSizer->AddSpacer(GAP / 2);
-    mainSizer->Add(tableNameLabel);
-    mainSizer->AddSpacer(GAP / 2);
+    m_MainSizer->AddSpacer(GAP / 2);
+    m_MainSizer->Add(tableNameLabel);
+    m_MainSizer->AddSpacer(GAP / 2);
 
-    tableNameTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    mainSizer->Add(tableNameTextCtrl, 0, wxEXPAND);
-    mainSizer->AddSpacer(GAP);
+    m_TableNameTextCtrl = new wxTextCtrl(this, wxID_ANY);
+    m_MainSizer->Add(m_TableNameTextCtrl, 0, wxEXPAND);
+    m_MainSizer->AddSpacer(GAP);
 
     auto* colLabel = new wxStaticText(this, wxID_ANY, "Column names and data types");
     colLabel->SetFont(FONT);
-    mainSizer->Add(colLabel);
-    mainSizer->AddSpacer(GAP / 2);
+    m_MainSizer->Add(colLabel);
+    m_MainSizer->AddSpacer(GAP / 2);
 
     auto* addRowBtn = new wxButton(this, ID::ADD_ROW, "Add");
-    mainSizer->Add(addRowBtn);
-    mainSizer->AddSpacer(GAP);
+    m_MainSizer->Add(addRowBtn);
+    m_MainSizer->AddSpacer(GAP);
 
     auto* btnSizer = CreateButtonSizer(wxOK | wxCANCEL);
-    mainSizer->Add(btnSizer);
-    mainSizer->AddSpacer(GAP / 2);
+    m_MainSizer->Add(btnSizer);
+    m_MainSizer->AddSpacer(GAP / 2);
 
     AddNewDataRow();
-    mainSizer->SetMinSize(wxSize(300, -1));
-    wxDialog::SetSizerAndFit(mainSizer);
+    m_MainSizer->SetMinSize(wxSize(300, -1));
+    wxDialog::SetSizerAndFit(m_MainSizer);
 }
 
 void TableCreationDialog::OnCreate(wxCommandEvent& event)
 {
-    if (tableNameTextCtrl)
+    if (m_TableNameTextCtrl)
     {
-        tableName = StringUtils::Trim(tableNameTextCtrl->GetValue().ToStdString());
-        if (tableName.empty())
+        m_TableName = StringUtils::Trim(m_TableNameTextCtrl->GetValue().ToStdString());
+        if (m_TableName.empty())
         {
             wxMessageBox("Table name is required", "Error", wxICON_ERROR);
             return;
         }
     }
 
-    columns.reserve(dataCtrls.size() + 1);
-    columns.push_back("id:ID");
-    for (const auto& dataCtrl: dataCtrls)
+    m_Columns.reserve(m_DataCtrls.size() + 1);
+    m_Columns.push_back("id:ID");
+    for (const auto& dataCtrl: m_DataCtrls)
     {
         auto* textCtrl = dynamic_cast<wxTextCtrl*>(dataCtrl[0]);
         if (textCtrl == nullptr) return;
@@ -76,7 +76,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
 
         const std::string& type = choiceCtrl->GetString(choiceCtrl->GetSelection()).ToStdString();
         colName += ":" + type;
-        columns.push_back(colName);
+        m_Columns.push_back(colName);
     }
 
     wxDialog::EndModal(wxID_OK);
@@ -84,7 +84,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
 
 void TableCreationDialog::AddNewDataRow()
 {
-    if (mainSizer == nullptr) return;
+    if (m_MainSizer == nullptr) return;
 
     auto* colSizer = new wxBoxSizer(wxHORIZONTAL);
     auto* colNameTextCtrl = new wxTextCtrl(this, wxID_ANY);
@@ -96,17 +96,12 @@ void TableCreationDialog::AddNewDataRow()
     typeChoice->SetSelection(0);
     colSizer->Add(typeChoice);
 
-    size_t lastIdx = mainSizer->GetItemCount() - 1;
-    mainSizer->Insert(lastIdx - 3, colSizer, 0, wxEXPAND);
-    mainSizer->InsertSpacer(lastIdx - 2, GAP / 2);
+    size_t lastIdx = m_MainSizer->GetItemCount() - 1;
+    m_MainSizer->Insert(lastIdx - 3, colSizer, 0, wxEXPAND);
+    m_MainSizer->InsertSpacer(lastIdx - 2, GAP / 2);
 
-    dataCtrls.push_back({ colNameTextCtrl, typeChoice });
+    m_DataCtrls.push_back({ colNameTextCtrl, typeChoice });
     Fit();
 }
 
 void TableCreationDialog::OnAddDataRow(wxCommandEvent& event) { AddNewDataRow(); }
-
-const std::string& TableCreationDialog::GetTableName() const { return tableName; }
-
-const Columns& TableCreationDialog::GetColumns() const { return columns; }
-

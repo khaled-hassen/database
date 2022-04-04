@@ -6,13 +6,13 @@
 class Window : public wxFrame
 {
 private:
-    bool isTableToolAdded = false;
-    Pointer<Database> db;
-    wxToolBar* toolbar = nullptr;
+    bool m_IsTableToolAdded = false;
+    Pointer<Database> m_Db;
+    wxToolBar* m_Toolbar = nullptr;
 
-    class TableSelectionPanel* leftPanel = nullptr;
+    class TableSelectionPanel* m_LeftPanel = nullptr;
 
-    class RecordsViewPanel* rightPanel = nullptr;
+    class RecordsViewPanel* m_RightPanel = nullptr;
 
 public:
     Window(const wxString& title, const wxSize& size);

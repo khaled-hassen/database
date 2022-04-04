@@ -18,8 +18,8 @@ DBCreationDialog::DBCreationDialog(wxWindow* parent, wxWindowID id)
     mainSizer->Add(label);
     mainSizer->AddSpacer(GAP);
 
-    textCtrl = new wxTextCtrl(this, wxID_ANY);
-    mainSizer->Add(textCtrl, 0, wxEXPAND);
+    m_TextCtrl = new wxTextCtrl(this, wxID_ANY);
+    mainSizer->Add(m_TextCtrl, 0, wxEXPAND);
     mainSizer->AddSpacer(GAP);
 
     auto* btnSizer = CreateButtonSizer(wxOK | wxCANCEL);
@@ -31,14 +31,12 @@ DBCreationDialog::DBCreationDialog(wxWindow* parent, wxWindowID id)
     wxDialog::Fit();
 }
 
-const std::string& DBCreationDialog::GetDbName() const { return dbName; }
-
 void DBCreationDialog::OnCreate(wxCommandEvent& event)
 {
-    if (textCtrl)
+    if (m_TextCtrl)
     {
-        dbName = StringUtils::Trim(textCtrl->GetValue().ToStdString());
-        if (dbName.empty())
+        m_DbName = StringUtils::Trim(m_TextCtrl->GetValue().ToStdString());
+        if (m_DbName.empty())
         {
             wxMessageBox("Database name is required", "Error", wxICON_ERROR);
             return;

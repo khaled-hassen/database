@@ -6,12 +6,12 @@
 class DBSelectionDialog : public wxDialog
 {
 private:
-    std::string dbName;
+    std::string m_DbName;
 
 public:
     DBSelectionDialog(wxWindow* parent, wxWindowID id, const wxString& title);
 
-    [[nodiscard]] const std::string& GetDbName() const;
+    [[nodiscard]] inline const std::string& GetDbName() const { return m_DbName; }
 
 private:
     void OnSelectItem(class wxListEvent& event);

@@ -7,8 +7,8 @@ class CLI
 {
 private:
     // string is initialized by its constructor
-    std::string command;
-    bool exit;
+    std::string m_Command;
+    bool m_Exit;
 
 // helper private methods
 private:
@@ -23,7 +23,7 @@ public:
 
     // return if the cli is still closed or not
     // [[nodiscard]] will tell the compiler that the return value shouldn't be ignored (>= c++ 17)
-    [[nodiscard]] bool isClosed() const { return exit; }
+    [[nodiscard]] bool isClosed() const { return m_Exit; }
 
     // listen for commands
     void listen();

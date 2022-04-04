@@ -1,17 +1,17 @@
 #include "StringUtils.h"
 #include <algorithm>
 
-std::string StringUtils::WHITESPACE = " \n\t";
+std::string StringUtils::s_WHITESPACE = " \n\t";
 
 std::string StringUtils::LeftTrim(const std::string& str)
 {
-    std::string::size_type start = str.find_first_not_of(WHITESPACE);
+    std::string::size_type start = str.find_first_not_of(s_WHITESPACE);
     return (start == std::string::npos) ? "" : str.substr(start);
 }
 
 std::string StringUtils::RightTrim(const std::string& str)
 {
-    std::string::size_type end = str.find_last_not_of(WHITESPACE);
+    std::string::size_type end = str.find_last_not_of(s_WHITESPACE);
     return (end == std::string::npos) ? "" : str.substr(0, end + 1);
 }
 

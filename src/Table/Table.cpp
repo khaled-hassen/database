@@ -6,45 +6,33 @@
 #include <utility>
 #include <algorithm>
 
-Table::Table(std::string path, Columns columns) : path(std::move(path)), columns(std::move(columns))
-{
-    unsigned start = this->path.find_last_of('/') + 1;
-    unsigned end = this->path.find(".csv") - start;
-    name = this->path.substr(start, end);
-}
+Table::Table(std::string path, std::string name, Columns columns)
+        : m_Path(std::move(path)), m_Name(std::move(name)), m_Columns(std::move(columns)) { }
 
-Table::Table(std::string path, Columns columns, const Data& data) : path(std::move(path)), columns(std::move(columns)),
-                                                                    data(data)
+Table::Table(std::string path, std::string name, Columns columns, const Data& data)
+        : m_Path(std::move(path)), m_Name(std::move(name)), m_Columns(std::move(columns)), m_Data(data)
 {
-    unsigned start = this->path.find_last_of('/') + 1;
-    unsigned end = this->path.find(".csv") - start;
-    name = this->path.substr(start, end);
-
     if (data.empty()) return;
     std::string lastId = data.back().at("id");
     ID::SetLastID(std::stoi(lastId));
 }
 
-const std::string& Table::GetName() const { return name; }
-
-const std::string& Table::GetPath() const { return path; }
-
 void Table::Save() const
 {
-    CSVFile file(path);
+    CSVFile file(m_Path);
     file.CreateNewFile();
-    file.Save(columns, data);
+    file.Save(m_Columns, m_Data);
 }
 
 void Table::InsertRecord()
 {
-    auto it = columns.begin();
+    auto it = m_Columns.begin();
     ++it;
-    unsigned size = columns.size();
+    unsigned size = m_Columns.size();
     Record record;
     record.reserve(size + 1); // +1 for the id column
     record.insert({ "id", ID().ToString() });
-    while (it != columns.end())
+    while (it != m_Columns.end())
     {
         while (true)
         {
@@ -68,12 +56,12 @@ void Table::InsertRecord()
         }
         ++it;
     }
-    data.push_back(record);
+    m_Data.push_back(record);
 }
 
 void Table::ShowRecords() const
 {
-    for (const auto& record: data)
+    for (const auto& record: m_Data)
     {
         for (const auto& val: record) std::cout << val.first << ":" << val.second << "\n";
         std::cout << std::endl;
@@ -82,16 +70,16 @@ void Table::ShowRecords() const
 
 void Table::DeleteRecord(unsigned id)
 {
-    auto it = std::find_if(data.begin(), data.end(),
+    auto it = std::find_if(m_Data.begin(), m_Data.end(),
                            [id](const Record& record) { return record.at("id") == std::to_string(id); });
-    if (it == data.end()) throw std::exception("This record doesn't exit");
-    data.erase(it);
+    if (it == m_Data.end()) throw std::exception("This record doesn't exit");
+    m_Data.erase(it);
 }
 
 void Table::SearchRecord() const
 {
     std::string colNames = "( ";
-    for (const auto& col: columns) colNames += col + ", ";
+    for (const auto& col: m_Columns) colNames += col + ", ";
     colNames = colNames.substr(0, colNames.size() - 2) + " )";
 
     std::string col;
@@ -126,7 +114,7 @@ void Table::SearchRecord() const
     }
 
     bool found = false;
-    for (const auto& record: data)
+    for (const auto& record: m_Data)
     {
         if (record.at(col) == value)
         {
@@ -139,14 +127,14 @@ void Table::SearchRecord() const
 
 void Table::UpdateRecord(unsigned int id)
 {
-    auto record = std::find_if(data.begin(), data.end(),
+    auto record = std::find_if(m_Data.begin(), m_Data.end(),
                                [id](const Record& record) { return record.at("id") == std::to_string(id); });
-    if (record == data.end()) throw std::exception("This record doesn't exit");
+    if (record == m_Data.end()) throw std::exception("This record doesn't exit");
 
-    auto it = columns.begin();
+    auto it = m_Columns.begin();
     ++it;
-    unsigned size = columns.size();
-    while (it != columns.end())
+    unsigned size = m_Columns.size();
+    while (it != m_Columns.end())
     {
         while (true)
         {

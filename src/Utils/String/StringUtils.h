@@ -5,7 +5,7 @@
 class StringUtils
 {
 private:
-    static std::string WHITESPACE;
+    static std::string s_WHITESPACE;
 
     static std::string LeftTrim(const std::string& str);
 

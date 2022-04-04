@@ -6,15 +6,15 @@
 class ID
 {
 private:
-    static unsigned lastId;
-    unsigned value;
+    static unsigned s_LastId;
+    unsigned m_Value;
 
 public:
-    ID() : value(lastId + 1) { ++lastId; }
+    ID() : m_Value(s_LastId + 1) { ++s_LastId; }
 
-    static void SetLastID(unsigned id) { lastId = id; }
+    static void SetLastID(unsigned id) { s_LastId = id; }
 
-    [[nodiscard]] std::string ToString() const { return std::to_string(value); }
+    [[nodiscard]] inline std::string ToString() const { return std::to_string(m_Value); }
 };
 
-unsigned ID::lastId = 0;
+unsigned ID::s_LastId = 0;

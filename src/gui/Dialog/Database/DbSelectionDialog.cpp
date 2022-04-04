@@ -34,12 +34,10 @@ DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id, const wxString& t
     wxDialog::Fit();
 }
 
-const std::string& DBSelectionDialog::GetDbName() const { return dbName; }
-
-void DBSelectionDialog::OnSelectItem(wxListEvent& event) { dbName = event.GetText(); }
+void DBSelectionDialog::OnSelectItem(wxListEvent& event) { m_DbName = event.GetText(); }
 
 void DBSelectionDialog::OnItemSelected(wxListEvent& event)
 {
-    dbName = event.GetText();
+    m_DbName = event.GetText();
     wxDialog::EndModal(wxID_OK);
 }

@@ -7,8 +7,8 @@
 class CSVFile
 {
 private:
-    std::string filename;
-    std::fstream file;
+    std::string m_Filename;
+    std::fstream m_File;
 
 private:
     // close the file

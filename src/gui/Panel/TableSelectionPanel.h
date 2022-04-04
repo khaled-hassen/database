@@ -7,14 +7,14 @@
 class TableSelectionPanel : public wxPanel
 {
 private:
-    class wxListView* tableList = nullptr;
+    class wxListView* m_TableList = nullptr;
 
-    std::string tableName;
+    std::string m_TableName;
 
 public:
     TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size);
 
-    [[nodiscard]] const std::string& GetTableName() const;
+    [[nodiscard]] inline const std::string& GetTableName() const { return m_TableName; }
 
     // display the tables list to the ui
     void ShowTablesList(const std::vector<std::string>& items);

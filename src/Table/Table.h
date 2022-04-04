@@ -6,19 +6,19 @@
 class Table
 {
 private:
-    std::string path;
-    std::string name;
-    Columns columns;
-    Data data;
+    std::string m_Path;
+    std::string m_Name;
+    Columns m_Columns;
+    Data m_Data;
 
 public:
-    Table(std::string path, Columns columns);
+    Table(std::string path, std::string name, Columns columns);
 
-    Table(std::string path, Columns columns, const Data& data);
+    Table(std::string path, std::string name, Columns columns, const Data& data);
 
-    [[nodiscard]] const std::string& GetPath() const;
+    [[nodiscard]] inline const std::string& GetPath() const { return m_Path; }
 
-    [[nodiscard]] const std::string& GetName() const;
+    [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
 
     // save the table to disk
     void Save() const;

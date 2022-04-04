@@ -6,12 +6,12 @@
 class DBCreationDialog : public wxDialog
 {
 private:
-    std::string dbName;
-    wxTextCtrl* textCtrl = nullptr;
+    std::string m_DbName;
+    wxTextCtrl* m_TextCtrl = nullptr;
 public:
     DBCreationDialog(wxWindow* parent, wxWindowID id);
 
-    [[nodiscard]] const std::string& GetDbName() const;
+    [[nodiscard]] inline const std::string& GetDbName() const { return m_DbName; }
 
 private:
     void OnCreate(wxCommandEvent& event);

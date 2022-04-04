@@ -6,73 +6,73 @@
 #include <algorithm>
 
 namespace fs = std::filesystem;
-std::string Database::BASE_NAME = "databases/";
+std::string Database::s_BASE_NAME = "databases/";
 
 std::vector<std::string> Database::ScanForDatabases()
 {
-    if (!fs::exists(BASE_NAME)) return std::vector<std::string>(0);
+    if (!fs::exists(s_BASE_NAME)) return std::vector<std::string>(0);
 
     std::vector<std::string> dbNames;
-    for (const auto& entry: fs::directory_iterator(BASE_NAME))
-        dbNames.push_back(entry.path().string().substr(BASE_NAME.length()));
+    for (const auto& entry: fs::directory_iterator(s_BASE_NAME))
+        dbNames.push_back(entry.path().string().substr(s_BASE_NAME.length()));
 
     return dbNames;
 }
 
-void Database::CreateDb(const std::string& _dbName)
+void Database::CreateDb(const std::string& dbName)
 {
     CloseDb();
-    if (!fs::exists(BASE_NAME))
+    if (!fs::exists(s_BASE_NAME))
     {
-        bool success = fs::create_directory(BASE_NAME);
+        bool success = fs::create_directory(s_BASE_NAME);
         if (!success) throw std::exception("Can't create database");
     }
 
-    if (fs::exists(BASE_NAME + _dbName)) throw std::exception("Database exists");
+    if (fs::exists(s_BASE_NAME + dbName)) throw std::exception("Database exists");
 
-    dbPath = BASE_NAME + _dbName;
-    dbName = _dbName;
-    bool success = fs::create_directory(dbPath);
+    m_Path = s_BASE_NAME + dbName;
+    m_Name = dbName;
+    bool success = fs::create_directory(m_Path);
     if (!success) throw std::exception("Can't create database");
     LoadTablesNames();
 }
 
-void Database::OpenDb(const std::string& _dbName)
+void Database::OpenDb(const std::string& dbName)
 {
     CloseDb();
-    CheckDbExists(_dbName);
-    dbPath = BASE_NAME + _dbName;
-    dbName = _dbName;
+    CheckDbExists(dbName);
+    m_Path = s_BASE_NAME + dbName;
+    m_Name = dbName;
     LoadTablesNames();
 }
 
 void Database::LoadTablesNames()
 {
-    for (const auto& entry: fs::directory_iterator(dbPath))
+    for (const auto& entry: fs::directory_iterator(m_Path))
     {
         const fs::path& file = entry.path();
         if (file.extension() == ".csv")
         {
             const std::string& filename = file.filename().string();
-            tableNames.push_back(filename.substr(0, filename.length() - 4)); // 4 is the length of ".csv"
+            m_TableNames.push_back(filename.substr(0, filename.length() - 4)); // 4 is the length of ".csv"
         }
     }
 }
 
 void Database::CheckOpenedDb() const
 {
-    if (dbName.empty()) throw std::exception("There is no opened database");
+    if (m_Name.empty()) throw std::exception("There is no opened database");
 }
 
-void Database::CheckDbExists(const std::string& _dbName)
+void Database::CheckDbExists(const std::string& dbName)
 {
-    if (!fs::exists(BASE_NAME + _dbName)) throw std::exception("Database doesn't exist");
+    if (!fs::exists(s_BASE_NAME + dbName)) throw std::exception("Database doesn't exist");
 }
 
 void Database::ShowTables() const
 {
     CheckOpenedDb();
-    for (const auto& entry: tableNames)
+    for (const auto& entry: m_TableNames)
     {
         // prevent the extension and the full path from being printed
         // 4 is the size of ".csv"
@@ -86,63 +86,59 @@ void Database::ShowTables() const
 
 void Database::CloseDb()
 {
-    tableNames.clear();
-    dbName = "";
-    dbPath = "";
+    m_TableNames.clear();
+    m_Name = "";
+    m_Path = "";
     CloseTable();
 }
 
-const std::string& Database::GetDbName() const { return dbName; }
-
-const std::vector<std::string>& Database::GetTableNames() const { return tableNames; }
-
-void Database::DropDb(const std::string& _dbName)
+void Database::DropDb(const std::string& dbName)
 {
-    const std::string& tmpPath = BASE_NAME + _dbName;
-    if (_dbName == dbName) CloseDb(); // close the opened database if it's getting deleted
-    else CheckDbExists(_dbName);
+    const std::string& tmpPath = s_BASE_NAME + dbName;
+    if (dbName == m_Name) CloseDb(); // close the opened database if it's getting deleted
+    else CheckDbExists(dbName);
     fs::remove_all(tmpPath);
 }
 
-std::string Database::CreateTablePath(const std::string& tableName) const { return dbPath + "/" + tableName + ".csv"; }
+std::string Database::CreateTablePath(const std::string& tableName) const { return m_Path + "/" + tableName + ".csv"; }
 
 void Database::CreateTable(const std::string& tableName, const Columns& cols)
 {
     CheckOpenedDb();
     CloseTable();
-    const std::string& filename = CreateTablePath(tableName);
-    if (fs::exists(filename)) throw std::exception("Table exists");
+    const std::string& path = CreateTablePath(tableName);
+    if (fs::exists(path)) throw std::exception("Table exists");
 
-    table = Pointer(new Table(filename, cols));
-    table->Save();
-    tableNames.push_back(tableName);
+    m_Table = Pointer(new Table(path, tableName, cols));
+    m_Table->Save();
+    m_TableNames.push_back(tableName);
 }
 
 void Database::OpenTable(const std::string& tableName)
 {
     CheckOpenedDb();
     CloseTable();
-    const std::string& filename = CreateTablePath(tableName);
-    CSVFile file(filename);
+    const std::string& path = CreateTablePath(tableName);
+    CSVFile file(path);
     Columns columns;
     Data data;
     file.Read(columns, data);
-    table = Pointer(new Table(filename, columns, data));
+    m_Table = Pointer(new Table(path, tableName, columns, data));
 }
 
 const Pointer<Table>& Database::GetTable() const
 {
     CheckOpenedTable();
-    return table;
+    return m_Table;
 }
 
 void Database::CheckOpenedTable() const
 {
     CheckOpenedDb();
-    if (table == nullptr) throw std::exception("There's no opened table");
+    if (m_Table == nullptr) throw std::exception("There's no opened table");
 }
 
-void Database::CloseTable() { table = Pointer<Table>::GetNull(); }
+void Database::CloseTable() { m_Table = Pointer<Table>::GetNull(); }
 
 void Database::DropTable()
 {
@@ -150,7 +146,7 @@ void Database::DropTable()
     std::string path = GetTable()->GetPath();
     CloseTable();
     // remove the tableName from the tableNames vector
-    tableNames.erase(std::remove(tableNames.begin(), tableNames.end(), name), tableNames.end());
+    m_TableNames.erase(std::remove(m_TableNames.begin(), m_TableNames.end(), name), m_TableNames.end());
     CSVFile file(path);
     file.Delete();
 }

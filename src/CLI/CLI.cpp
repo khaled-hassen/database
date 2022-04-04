@@ -3,7 +3,7 @@
 #include <vector>
 #include <sstream>
 
-CLI::CLI() : exit(false) { std::cout << "Type help to display available commands" << std::endl; }
+CLI::CLI() : m_Exit(false) { std::cout << "Type help to display available commands" << std::endl; }
 
 void CLI::showHelp()
 {
@@ -42,13 +42,13 @@ std::vector<std::string> CLI::parseCommand(const std::string& _command)
 void CLI::listen()
 {
     std::cout << ">";
-    std::getline(std::cin, command);
+    std::getline(std::cin, m_Command);
 }
 
 void CLI::execute()
 {
-    if (command.empty()) return;
-    std::vector<std::string> parsedCommand = parseCommand(command);
+    if (m_Command.empty()) return;
+    std::vector<std::string> parsedCommand = parseCommand(m_Command);
     std::string action = parsedCommand[0];
     if (action == "help")
     {
@@ -58,7 +58,7 @@ void CLI::execute()
 
     if (action == "exit")
     {
-        exit = true;
+        m_Exit = true;
         return;
     }
 

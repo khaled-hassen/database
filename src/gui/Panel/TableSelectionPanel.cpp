@@ -13,32 +13,30 @@ TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const 
     wxPanel::SetBackgroundColour(color);
     auto* sizer = new wxBoxSizer(wxVERTICAL);
 
-    tableList = new wxListView(this, ID::TABLE_LIST_VIEW);
-    tableList->SetSingleStyle(wxLC_SINGLE_SEL);
-    tableList->SetBackgroundColour(color);
-    sizer->Add(tableList, 1, wxEXPAND);
+    m_TableList = new wxListView(this, ID::TABLE_LIST_VIEW);
+    m_TableList->SetSingleStyle(wxLC_SINGLE_SEL);
+    m_TableList->SetBackgroundColour(color);
+    sizer->Add(m_TableList, 1, wxEXPAND);
 
-    tableList->AppendColumn("Available Tables");
-    tableList->SetColumnWidth(0, size.GetWidth());
-    tableList->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+    m_TableList->AppendColumn("Available Tables");
+    m_TableList->SetColumnWidth(0, size.GetWidth());
+    m_TableList->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
     SetSizer(sizer);
 }
 
 void TableSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
 {
-    if (tableList == nullptr) return;
-    tableList->DeleteAllItems(); // delete old names
-    for (const auto& item: items) tableList->InsertItem(0, item);
+    if (m_TableList == nullptr) return;
+    m_TableList->DeleteAllItems(); // delete old names
+    for (const auto& item: items) m_TableList->InsertItem(0, item);
 }
 
 void TableSelectionPanel::OnSelectTable(wxListEvent& event)
 {
     if (GetParent() == nullptr) return;
 
-    tableName = event.GetText();
+    m_TableName = event.GetText();
     wxCommandEvent ev(wxEVT_MENU, GetId());
     wxPostEvent(GetParent(), ev);
 }
-
-const std::string& TableSelectionPanel::GetTableName() const { return tableName; }
