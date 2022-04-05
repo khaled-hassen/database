@@ -60,11 +60,11 @@ Window::Window(const wxString& title, const wxSize& size)
     // create viewport
     auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_LeftPanel = new TableSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
-    mainSizer->Add(m_LeftPanel, 0, wxEXPAND);
+    m_TablesPanel = new TableSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
+    mainSizer->Add(m_TablesPanel, 0, wxEXPAND);
 
-    m_RightPanel = new RecordsViewPanel(this, wxID_ANY);
-    mainSizer->Add(m_RightPanel, 1, wxEXPAND);
+    m_RecordsPanel = new RecordsViewPanel(this, wxID_ANY);
+    mainSizer->Add(m_RecordsPanel, 1, wxEXPAND);
 
     SetSizer(mainSizer);
 }
@@ -110,6 +110,7 @@ void Window::OnDropDB(wxCommandEvent& event)
         int confirmId = confirmDialog->ShowModal();
         if (confirmId == wxID_YES) m_Db->DropDb(dbName);
         confirmDialog->Destroy();
+        if (!m_Db->IsDbOpen()) wxFrame::SetStatusText("No database is opened", 0);
     }
 
     dialog->Destroy();
@@ -138,7 +139,7 @@ void Window::UpdateUI()
     const std::vector<std::string>& tables = m_Db->GetTableNames();
     wxString str;
     for (const auto& it: tables) str += it + " ";
-    if (m_LeftPanel) m_LeftPanel->ShowTablesList(tables);
+    if (m_TablesPanel) m_TablesPanel->ShowTablesList(tables);
 }
 
 void Window::OnCreateTable(wxCommandEvent& event)
@@ -149,20 +150,25 @@ void Window::OnCreateTable(wxCommandEvent& event)
     if (id == wxID_OK)
     {
         m_Db->CreateTable(dialog->GetTableName(), dialog->GetColumns());
-        const std::string& tableName = m_Db->GetTable()->GetName();
         UpdateUI();
-        SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
+        UpdateTableViewUI(m_Db->GetTable()->GetName());
     }
     dialog->Destroy();
 }
 
 void Window::OnOpenTable(wxCommandEvent& event)
 {
-    if (m_LeftPanel == nullptr) return;
-    const std::string& tableName = m_LeftPanel->GetTableName();
+    if (m_TablesPanel == nullptr) return;
+    const std::string& tableName = m_TablesPanel->GetTableName();
     m_Db->OpenTable(tableName);
+    UpdateTableViewUI(tableName);
+}
+
+void Window::UpdateTableViewUI(const std::string& tableName)
+{
     SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
-    // TODO display the table data
+    if (m_RecordsPanel == nullptr) return;
+    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }
 
 void Window::OnDropTable(wxCommandEvent& event)

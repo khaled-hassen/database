@@ -61,7 +61,7 @@ void Database::LoadTablesNames()
 
 void Database::CheckOpenedDb() const
 {
-    if (m_Name.empty()) throw std::exception("There is no opened database");
+    if (!IsDbOpen()) throw std::exception("There is no opened database");
 }
 
 void Database::CheckDbExists(const std::string& dbName)

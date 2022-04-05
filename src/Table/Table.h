@@ -20,6 +20,10 @@ public:
 
     [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
 
+    [[nodiscard]] inline const Data& GetData() const { return m_Data; }
+
+    [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
+
     // save the table to disk
     void Save() const;
 

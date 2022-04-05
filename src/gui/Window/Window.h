@@ -10,9 +10,9 @@ private:
     Pointer<Database> m_Db;
     wxToolBar* m_Toolbar = nullptr;
 
-    class TableSelectionPanel* m_LeftPanel = nullptr;
+    class TableSelectionPanel* m_TablesPanel = nullptr;
 
-    class RecordsViewPanel* m_RightPanel = nullptr;
+    class RecordsViewPanel* m_RecordsPanel = nullptr;
 
 public:
     Window(const wxString& title, const wxSize& size);
@@ -32,6 +32,8 @@ private:
     void OnCreateTable(wxCommandEvent& event);
 
     void OnOpenTable(wxCommandEvent& event);
+
+    void UpdateTableViewUI(const std::string& tableName);
 
     void OnDropTable(wxCommandEvent& event);
 

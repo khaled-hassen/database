@@ -2,6 +2,7 @@
 #include <sstream>
 #include <utility>
 #include <filesystem>
+#include "Utils/String/StringUtils.h"
 
 CSVFile::CSVFile(std::string filename) : m_Filename(std::move(filename)) { }
 
@@ -28,8 +29,11 @@ void CSVFile::Save(const Columns& cols, const Data& data)
 {
     m_File.clear();
     m_File.seekp(0);
-    unsigned size = cols.size();
-    for (const auto& col: cols) m_File << col << ",";
+    for (auto col: cols)
+    {
+        StringUtils::Replace(col, ' ', '-');
+        m_File << col << ",";
+    }
     // delete trailing comma
     long long pos = m_File.tellp();
     m_File.seekp(pos - 1);
@@ -38,7 +42,7 @@ void CSVFile::Save(const Columns& cols, const Data& data)
 
     for (const auto& record: data)
     {
-        for (const auto& it: record) m_File << it.second << ",";
+        for (const auto&[_, val]: record) m_File << val << ",";
         // delete trailing comma
         pos = m_File.tellp();
         m_File.seekp(pos - 1);

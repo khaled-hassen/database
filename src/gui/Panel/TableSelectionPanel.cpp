@@ -9,13 +9,11 @@ END_EVENT_TABLE()
 TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size)
         : wxPanel(parent, id, wxDefaultPosition, size, wxTAB_TRAVERSAL, wxPanelNameStr)
 {
-    auto color = wxColor("#F7F5F2");
-    wxPanel::SetBackgroundColour(color);
     auto* sizer = new wxBoxSizer(wxVERTICAL);
 
     m_TableList = new wxListView(this, wxWindowId::TABLE_LIST_VIEW);
     m_TableList->SetSingleStyle(wxLC_SINGLE_SEL);
-    m_TableList->SetBackgroundColour(color);
+    m_TableList->SetBackgroundColour(wxColor("#F7F5F2"));
     sizer->Add(m_TableList, 1, wxEXPAND);
 
     m_TableList->AppendColumn("Available Tables");

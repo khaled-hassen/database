@@ -48,6 +48,8 @@ public:
 
     [[nodiscard]] inline const std::vector<std::string>& GetTableNames() const { return m_TableNames; }
 
+    [[nodiscard]] inline bool IsDbOpen() const { return !m_Name.empty() && !m_Path.empty(); }
+
     // display the database tables
     void ShowTables() const;
 

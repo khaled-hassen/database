@@ -63,7 +63,7 @@ void Table::ShowRecords() const
 {
     for (const auto& record: m_Data)
     {
-        for (const auto& val: record) std::cout << val.first << ":" << val.second << "\n";
+        for (const auto&[key, val]: record) std::cout << key << ":" << val << "\n";
         std::cout << std::endl;
     }
 }
@@ -119,7 +119,7 @@ void Table::SearchRecord() const
         if (record.at(col) == value)
         {
             found = true;
-            for (const auto& it: record) std::cout << it.first << ":" << it.second << "\n";
+            for (const auto&[key, val]: record) std::cout << key << ":" << val << "\n";
         }
     }
     if (!found) std::cout << "No record found" << std::endl;
