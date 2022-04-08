@@ -19,6 +19,8 @@ RecordsViewPanel::RecordsViewPanel(wxWindow* parent, wxWindowID id)
 
 void RecordsViewPanel::ShowRecords(const Data& data, const Columns& columns)
 {
+    ClearRecords();
+
     if (m_RecordsList == nullptr) return;
     std::string::size_type size = columns.size();
     int width = static_cast<int>(GetSize().GetWidth() / size);
@@ -45,4 +47,10 @@ void RecordsViewPanel::ShowRecords(const Data& data, const Columns& columns)
         }
         ++index;
     }
+}
+
+void RecordsViewPanel::ClearRecords()
+{
+    if (m_RecordsList == nullptr) return;
+    m_RecordsList->ClearAll();
 }

@@ -6,9 +6,9 @@
 class Window : public wxFrame
 {
 private:
-    bool m_IsTableToolAdded = false;
+    bool m_IsTableToolsAdded = false;
+    bool m_IsRecordToolsAdded = false;
     Pointer<Database> m_Db;
-    wxToolBar* m_Toolbar = nullptr;
 
     class TableSelectionPanel* m_TablesPanel = nullptr;
 
@@ -19,6 +19,10 @@ public:
 
 private:
     void UpdateUI();
+
+    void AddTableTools();
+
+    void AddRecordTools();
 
     // handle close event
     void OnExit(wxCommandEvent& event);

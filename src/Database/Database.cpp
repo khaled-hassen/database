@@ -6,15 +6,15 @@
 #include <algorithm>
 
 namespace fs = std::filesystem;
-std::string Database::s_BASE_NAME = "databases/";
+std::string Database::s_BaseName = "databases/";
 
 std::vector<std::string> Database::ScanForDatabases()
 {
-    if (!fs::exists(s_BASE_NAME)) return std::vector<std::string>(0);
+    if (!fs::exists(s_BaseName)) return std::vector<std::string>(0);
 
     std::vector<std::string> dbNames;
-    for (const auto& entry: fs::directory_iterator(s_BASE_NAME))
-        dbNames.push_back(entry.path().string().substr(s_BASE_NAME.length()));
+    for (const auto& entry: fs::directory_iterator(s_BaseName))
+        dbNames.push_back(entry.path().string().substr(s_BaseName.length()));
 
     return dbNames;
 }
@@ -22,15 +22,15 @@ std::vector<std::string> Database::ScanForDatabases()
 void Database::CreateDb(const std::string& dbName)
 {
     CloseDb();
-    if (!fs::exists(s_BASE_NAME))
+    if (!fs::exists(s_BaseName))
     {
-        bool success = fs::create_directory(s_BASE_NAME);
+        bool success = fs::create_directory(s_BaseName);
         if (!success) throw std::exception("Can't create database");
     }
 
-    if (fs::exists(s_BASE_NAME + dbName)) throw std::exception("Database exists");
+    if (fs::exists(s_BaseName + dbName)) throw std::exception("Database exists");
 
-    m_Path = s_BASE_NAME + dbName;
+    m_Path = s_BaseName + dbName;
     m_Name = dbName;
     bool success = fs::create_directory(m_Path);
     if (!success) throw std::exception("Can't create database");
@@ -41,7 +41,7 @@ void Database::OpenDb(const std::string& dbName)
 {
     CloseDb();
     CheckDbExists(dbName);
-    m_Path = s_BASE_NAME + dbName;
+    m_Path = s_BaseName + dbName;
     m_Name = dbName;
     LoadTablesNames();
 }
@@ -66,7 +66,7 @@ void Database::CheckOpenedDb() const
 
 void Database::CheckDbExists(const std::string& dbName)
 {
-    if (!fs::exists(s_BASE_NAME + dbName)) throw std::exception("Database doesn't exist");
+    if (!fs::exists(s_BaseName + dbName)) throw std::exception("Database doesn't exist");
 }
 
 void Database::ShowTables() const
@@ -94,7 +94,7 @@ void Database::CloseDb()
 
 void Database::DropDb(const std::string& dbName)
 {
-    const std::string& tmpPath = s_BASE_NAME + dbName;
+    const std::string& tmpPath = s_BaseName + dbName;
     if (dbName == m_Name) CloseDb(); // close the opened database if it's getting deleted
     else CheckDbExists(dbName);
     fs::remove_all(tmpPath);

@@ -8,7 +8,7 @@
 class Database
 {
 private:
-    static std::string s_BASE_NAME;
+    static std::string s_BaseName;
     std::string m_Name;
     std::string m_Path;
     std::vector<std::string> m_TableNames;

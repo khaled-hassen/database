@@ -12,6 +12,8 @@ public:
     RecordsViewPanel(wxWindow* parent, wxWindowID id);
 
     void ShowRecords(const Data& data, const Columns& columns);
+
+    void ClearRecords();
 };
 
 
