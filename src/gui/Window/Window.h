@@ -41,6 +41,10 @@ private:
 
     void OnDropTable(wxCommandEvent& event);
 
+    void OnSaveTable(wxCommandEvent& event);
+
+    void OnDeleteRecord(wxCommandEvent& event);
+
 // for binding events (must be at the end of the class: may change class visibility)
 DECLARE_EVENT_TABLE()
 };

@@ -7,7 +7,7 @@
 
 BEGIN_EVENT_TABLE(DBSelectionDialog, wxDialog)
                 EVT_LIST_ITEM_SELECTED(wxWindowId::DB_LIST_VIEW, DBSelectionDialog::OnSelectItem)
-                EVT_LIST_ITEM_ACTIVATED(wxWindowId::DB_LIST_VIEW, DBSelectionDialog::OnItemSelected)
+                EVT_LIST_ITEM_ACTIVATED(wxWindowId::DB_LIST_VIEW, DBSelectionDialog::OnItemActivated)
 END_EVENT_TABLE()
 
 
@@ -36,7 +36,7 @@ DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id, const wxString& t
 
 void DBSelectionDialog::OnSelectItem(wxListEvent& event) { m_DbName = event.GetText(); }
 
-void DBSelectionDialog::OnItemSelected(wxListEvent& event)
+void DBSelectionDialog::OnItemActivated(wxListEvent& event)
 {
     m_DbName = event.GetText();
     wxDialog::EndModal(wxID_OK);

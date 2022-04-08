@@ -34,7 +34,7 @@ public:
     void ShowRecords() const;
 
     // delete a record by id from table
-    void DeleteRecord(unsigned id);
+    void DeleteRecord(unsigned index);
 
     // search table records and display results
     void SearchRecord() const;

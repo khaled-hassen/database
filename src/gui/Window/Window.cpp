@@ -16,6 +16,8 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
                 EVT_MENU(wxWindowId::NEW_TABLE, Window::OnCreateTable)
                 EVT_MENU(wxWindowId::OPEN_TABLE, Window::OnOpenTable)
                 EVT_MENU(wxWindowId::DROP_TABLE, Window::OnDropTable)
+                EVT_MENU(wxWindowId::DELETE_RECORD, Window::OnDeleteRecord)
+                EVT_MENU(wxWindowId::SAVE_TABLE, Window::OnSaveTable)
 END_EVENT_TABLE()
 
 Window::Window(const wxString& title, const wxSize& size)
@@ -134,8 +136,10 @@ void Window::AddTableTools()
 {
     GetToolBar()->AddTool(wxWindowId::NEW_TABLE, "Create Table", wxArtProvider::GetBitmap("wxART_NEW"));
     GetToolBar()->SetToolLongHelp(wxWindowId::NEW_TABLE, "Create a new table");
+
     GetToolBar()->AddTool(wxWindowId::DROP_TABLE, "Delete Table", wxArtProvider::GetBitmap("wxART_CROSS_MARK"));
     GetToolBar()->SetToolLongHelp(wxWindowId::DROP_TABLE, "Delete the active table");
+
     GetToolBar()->Realize();
 
     wxMenu* menu = GetMenuBar()->GetMenu(0);
@@ -150,14 +154,21 @@ void Window::AddRecordTools()
     m_IsRecordToolsAdded = true;
     GetToolBar()->AddTool(wxWindowId::ADD_RECORD, "Add record", wxArtProvider::GetBitmap("wxART_PLUS"));
     GetToolBar()->SetToolLongHelp(wxWindowId::ADD_RECORD, "Add a new record");
-    GetToolBar()->AddTool(wxWindowId::REMOVE_RECORD, "Remove record", wxArtProvider::GetBitmap("wxART_MINUS"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::REMOVE_RECORD, "Remove the selected record");
+
+    GetToolBar()->AddTool(wxWindowId::DELETE_RECORD, "Remove record", wxArtProvider::GetBitmap("wxART_MINUS"));
+    GetToolBar()->SetToolLongHelp(wxWindowId::DELETE_RECORD, "Remove the selected record");
+
+    GetToolBar()->AddStretchableSpace();
+    GetToolBar()->AddTool(wxWindowId::SAVE_TABLE, "Save table", wxArtProvider::GetBitmap("wxART_FILE_SAVE"));
+    GetToolBar()->SetToolLongHelp(wxWindowId::SAVE_TABLE, "Save table changes");
+
     GetToolBar()->Realize();
 
     wxMenu* menu = GetMenuBar()->GetMenu(0);
-    menu->InsertSeparator(6);
-    menu->Insert(7, wxWindowId::ADD_RECORD, "&Add record \tCtrl-A", "Add a new record");
-    menu->Insert(8, wxWindowId::REMOVE_RECORD, "&Remove record \tCtrl-D", "Remove the selected record");
+    menu->Insert(6, wxWindowId::SAVE_TABLE, "&Save table \tCtrl-S", "Save table changes");
+    menu->InsertSeparator(7);
+    menu->Insert(8, wxWindowId::ADD_RECORD, "&Add record \tCtrl-A", "Add a new record");
+    menu->Insert(9, wxWindowId::DELETE_RECORD, "&Remove record \tCtrl-D", "Remove the selected record");
 }
 
 void Window::OnCreateTable(wxCommandEvent& event)
@@ -202,4 +213,20 @@ void Window::OnDropTable(wxCommandEvent& event)
     UpdateUI();
     if (m_RecordsPanel == nullptr) return;
     m_RecordsPanel->ClearRecords();
+}
+
+void Window::OnSaveTable(wxCommandEvent& event) { m_Db->GetTable()->Save(); }
+
+void Window::OnDeleteRecord(wxCommandEvent& event)
+{
+    if (m_RecordsPanel == nullptr) return;
+
+    long index = m_RecordsPanel->GetSelectedRecord();
+    const char* message = "Are you sure you want to delete this record ?";
+    auto* confirmDialog = new wxMessageDialog(this, message, "Delete record", wxYES | wxNO);
+    int confirmId = confirmDialog->ShowModal();
+    if (confirmId == wxID_YES) m_Db->GetTable()->DeleteRecord(index);
+    confirmDialog->Destroy();
+    // show the updated records
+    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }

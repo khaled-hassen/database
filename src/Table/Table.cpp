@@ -68,12 +68,10 @@ void Table::ShowRecords() const
     }
 }
 
-void Table::DeleteRecord(unsigned id)
+void Table::DeleteRecord(unsigned index)
 {
-    auto it = std::find_if(m_Data.begin(), m_Data.end(),
-                           [id](const Record& record) { return record.at("id") == std::to_string(id); });
-    if (it == m_Data.end()) throw std::exception("This record doesn't exit");
-    m_Data.erase(it);
+    if (index >= m_Data.size() || index < 0) throw std::exception("This record doesn't exit");
+    m_Data.erase(m_Data.cbegin() + index);
 }
 
 void Table::SearchRecord() const

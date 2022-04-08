@@ -15,6 +15,8 @@ namespace wxWindowId
         RECORDS_VIEW = DROP_TABLE + 1,
         ADD_ROW = RECORDS_VIEW + 1,
         ADD_RECORD = ADD_ROW + 1,
-        REMOVE_RECORD = ADD_RECORD + 1,
+        DELETE_RECORD = ADD_RECORD + 1,
+        EDIT_RECORD = DELETE_RECORD + 1,
+        SAVE_TABLE = EDIT_RECORD + 1
     };
 }

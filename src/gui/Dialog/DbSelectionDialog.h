@@ -2,6 +2,7 @@
 
 #include "gui/wxwidgets.h"
 #include <string>
+#include <wx/listbase.h>
 
 class DBSelectionDialog : public wxDialog
 {
@@ -16,7 +17,7 @@ public:
 private:
     void OnSelectItem(class wxListEvent& event);
 
-    void OnItemSelected(class wxListEvent& event);
+    void OnItemActivated(wxListEvent& event);
 
 DECLARE_EVENT_TABLE()
 };

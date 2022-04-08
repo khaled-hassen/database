@@ -4,6 +4,10 @@
 #include <wx/listctrl.h>
 #include <string>
 
+BEGIN_EVENT_TABLE(RecordsViewPanel, wxPanel)
+                EVT_LIST_ITEM_SELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnSelectItem)
+END_EVENT_TABLE()
+
 RecordsViewPanel::RecordsViewPanel(wxWindow* parent, wxWindowID id)
         : wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, wxPanelNameStr)
 {
@@ -54,3 +58,5 @@ void RecordsViewPanel::ClearRecords()
     if (m_RecordsList == nullptr) return;
     m_RecordsList->ClearAll();
 }
+
+void RecordsViewPanel::OnSelectItem(wxListEvent& event) { m_SelectedRecord = event.GetIndex(); }
