@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-// a simple smart pointer implementation
+// a simple unique smart pointer implementation
 template<typename T>
 class Pointer
 {

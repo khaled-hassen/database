@@ -222,6 +222,12 @@ void Window::OnDeleteRecord(wxCommandEvent& event)
     if (m_RecordsPanel == nullptr) return;
 
     long index = m_RecordsPanel->GetSelectedRecord();
+    if (index < 0)
+    {
+        wxMessageBox("No record is selected", "Error", wxICON_ERROR);
+        return;
+    }
+
     const char* message = "Are you sure you want to delete this record ?";
     auto* confirmDialog = new wxMessageDialog(this, message, "Delete record", wxYES | wxNO);
     int confirmId = confirmDialog->ShowModal();
