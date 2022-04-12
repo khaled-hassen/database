@@ -28,7 +28,7 @@ Window::Window(const wxString& title, const wxSize& size)
     m_Db = Pointer(new Database());
 
     // initialize the event handler
-    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRowPtr()));
+    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRawPtr()));
 
     // create the file menu
     auto* fileMenu = new wxMenu();

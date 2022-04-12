@@ -42,6 +42,6 @@ public:
         return *this;
     }
 
-    // return the row c pointer
-    [[nodiscard]] T* GetRowPtr() const { return m_Ptr; }
+    // return the raw c pointer
+    [[nodiscard]] inline T* GetRawPtr() const { return m_Ptr; }
 };
