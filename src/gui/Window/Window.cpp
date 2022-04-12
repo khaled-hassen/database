@@ -1,11 +1,12 @@
 #include "Window.h"
 #include <wx/artprov.h>
 #include "gui/wxWindowId.h"
-#include "gui/Dialog/DbSelectionDialog.h"
-#include "gui/Dialog/DbCreationDialog.h"
 #include "gui/Panel/TableSelectionPanel.h"
 #include "gui/Panel/RecordsViewPanel.h"
-#include "gui/Dialog/TableCreationDialog.h"
+#include "gui/Event/EventHandler.h"
+
+#define BIND_FN_0Param(handler) std::bind(&Window::handler, this)
+#define BIND_FN_2Params(handler) std::bind(&Window::handler, this, std::placeholders::_1, std::placeholders::_2)
 
 // statically bind events to functions
 BEGIN_EVENT_TABLE(Window, wxFrame)
@@ -25,6 +26,9 @@ Window::Window(const wxString& title, const wxSize& size)
 {
     // initialize db
     m_Db = Pointer(new Database());
+
+    // initialize the event handler
+    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRowPtr()));
 
     // create the file menu
     auto* fileMenu = new wxMenu();
@@ -73,52 +77,13 @@ Window::Window(const wxString& title, const wxSize& size)
 
 void Window::OnExit(wxCommandEvent& event) { Close(true); }
 
-void Window::OnOpenDB(wxCommandEvent& event)
-{
-    auto* dialog = new DBSelectionDialog(this, wxID_ANY, "Open database");
-    int id = dialog->ShowModal();
+void Window::OnOpenDB(wxCommandEvent& event) { m_EventHandler->OpenDatabase(BIND_FN_0Param(UpdateUIData)); }
 
-    if (id == wxID_OK)
-    {
-        m_Db->OpenDb(dialog->GetDbName());
-        UpdateUI();
-    }
-    dialog->Destroy();
-}
+void Window::OnCreateDB(wxCommandEvent& event) { m_EventHandler->OnCreateDB(BIND_FN_0Param(UpdateUIData)); }
 
-void Window::OnCreateDB(wxCommandEvent& event)
-{
-    auto* dialog = new DBCreationDialog(this, wxID_ANY);
-    int id = dialog->ShowModal();
+void Window::OnDropDB(wxCommandEvent& event) { m_EventHandler->OnDropDb(); }
 
-    if (id == wxID_OK)
-    {
-        m_Db->CreateDb(dialog->GetDbName());
-        UpdateUI();
-    }
-    dialog->Destroy();
-}
-
-void Window::OnDropDB(wxCommandEvent& event)
-{
-    auto* dialog = new DBSelectionDialog(this, wxID_ANY, "Delete database");
-    int id = dialog->ShowModal();
-
-    if (id == wxID_OK)
-    {
-        const std::string& dbName = dialog->GetDbName();
-        const auto& message = wxString::Format("Are you sure you want to delete: %s ?", dbName.c_str());
-        auto* confirmDialog = new wxMessageDialog(dialog, message, "Delete database", wxYES | wxNO);
-        int confirmId = confirmDialog->ShowModal();
-        if (confirmId == wxID_YES) m_Db->DropDb(dbName);
-        confirmDialog->Destroy();
-        if (!m_Db->IsDbOpen()) wxFrame::SetStatusText("No database is opened", 0);
-    }
-
-    dialog->Destroy();
-}
-
-void Window::UpdateUI()
+void Window::UpdateUIData()
 {
     if (!m_IsTableToolsAdded)
     {
@@ -171,19 +136,13 @@ void Window::AddRecordTools()
     menu->Insert(9, wxWindowId::DELETE_RECORD, "&Remove record \tCtrl-D", "Remove the selected record");
 }
 
-void Window::OnCreateTable(wxCommandEvent& event)
-{
-    auto* dialog = new TableCreationDialog(this, wxID_ANY);
-    int id = dialog->ShowModal();
+void Window::OnCreateTable(wxCommandEvent& event) { m_EventHandler->OnCreateTable(BIND_FN_2Params(UpdateTableUI)); }
 
-    if (id == wxID_OK)
-    {
-        m_Db->CreateTable(dialog->GetTableName(), dialog->GetColumns());
-        UpdateUI();
-        UpdateTableViewUI(m_Db->GetTable()->GetName());
-        AddRecordTools();
-    }
-    dialog->Destroy();
+void Window::UpdateTableUI(const std::string& tableName, bool update)
+{
+    if (update) UpdateUIData();
+    UpdateTableViewUI(tableName);
+    AddRecordTools();
 }
 
 void Window::OnOpenTable(wxCommandEvent& event)
@@ -191,8 +150,7 @@ void Window::OnOpenTable(wxCommandEvent& event)
     if (m_TablesPanel == nullptr) return;
     const std::string& tableName = m_TablesPanel->GetTableName();
     m_Db->OpenTable(tableName);
-    UpdateTableViewUI(tableName);
-    AddRecordTools();
+    UpdateTableUI(tableName, false);
 }
 
 void Window::UpdateTableViewUI(const std::string& tableName)
@@ -204,13 +162,7 @@ void Window::UpdateTableViewUI(const std::string& tableName)
 
 void Window::OnDropTable(wxCommandEvent& event)
 {
-    const std::string& tableName = m_Db->GetTable()->GetName();
-    const auto& message = wxString::Format("Are you sure you want to delete: %s ?", tableName.c_str());
-    auto* confirmDialog = new wxMessageDialog(this, message, "Delete table", wxYES | wxNO);
-    int confirmId = confirmDialog->ShowModal();
-    if (confirmId == wxID_YES) m_Db->DropTable();
-    confirmDialog->Destroy();
-    UpdateUI();
+    m_EventHandler->OnDropTable(BIND_FN_0Param(UpdateUIData));
     if (m_RecordsPanel == nullptr) return;
     m_RecordsPanel->ClearRecords();
 }
@@ -220,19 +172,8 @@ void Window::OnSaveTable(wxCommandEvent& event) { m_Db->GetTable()->Save(); }
 void Window::OnDeleteRecord(wxCommandEvent& event)
 {
     if (m_RecordsPanel == nullptr) return;
-
     long index = m_RecordsPanel->GetSelectedRecord();
-    if (index < 0)
-    {
-        wxMessageBox("No record is selected", "Error", wxICON_ERROR);
-        return;
-    }
-
-    const char* message = "Are you sure you want to delete this record ?";
-    auto* confirmDialog = new wxMessageDialog(this, message, "Delete record", wxYES | wxNO);
-    int confirmId = confirmDialog->ShowModal();
-    if (confirmId == wxID_YES) m_Db->GetTable()->DeleteRecord(index);
-    confirmDialog->Destroy();
+    m_EventHandler->OnDeleteRecord(index);
     // show the updated records
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }

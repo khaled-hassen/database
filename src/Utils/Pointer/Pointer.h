@@ -41,4 +41,7 @@ public:
         obj.m_Ptr = nullptr;
         return *this;
     }
+
+    // return the row c pointer
+    [[nodiscard]] T* GetRowPtr() const { return m_Ptr; }
 };
