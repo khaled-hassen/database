@@ -77,7 +77,7 @@ void EventHandler::OnDropTable(const UpdateUIFn& updateUI) const
     updateUI();
 }
 
-void EventHandler::OnDeleteRecord(long index) const
+void EventHandler::OnDeleteRecord(long index, VoidFn callback) const
 {
     if (index < 0)
     {
@@ -90,4 +90,5 @@ void EventHandler::OnDeleteRecord(long index) const
     int confirmId = confirmDialog->ShowModal();
     if (confirmId == wxID_YES) m_Db->GetTable()->DeleteRecord(index);
     confirmDialog->Destroy();
+    callback();
 }

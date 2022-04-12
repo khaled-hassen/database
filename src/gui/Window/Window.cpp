@@ -173,7 +173,7 @@ void Window::OnDeleteRecord(wxCommandEvent& event)
 {
     if (m_RecordsPanel == nullptr) return;
     long index = m_RecordsPanel->GetSelectedRecord();
-    m_EventHandler->OnDeleteRecord(index);
+    m_EventHandler->OnDeleteRecord(index, [this]() { m_RecordsPanel->ResetSelectedRecord(); });
     // show the updated records
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }

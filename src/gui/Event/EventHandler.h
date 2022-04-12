@@ -3,7 +3,8 @@
 #include "Utils/Pointer/Pointer.h"
 #include <functional>
 
-using UpdateUIFn = std::function<void()>;
+using VoidFn = std::function<void()>;
+using UpdateUIFn = VoidFn;
 using UpdateTableUIFn = std::function<void(const std::string&, bool)>;
 
 class EventHandler
@@ -26,5 +27,5 @@ public:
 
     void OnDropTable(const UpdateUIFn& updateUI) const;
 
-    void OnDeleteRecord(long index) const;
+    void OnDeleteRecord(long index, VoidFn callback) const;
 };

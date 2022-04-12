@@ -6,6 +6,7 @@
 
 BEGIN_EVENT_TABLE(RecordsViewPanel, wxPanel)
                 EVT_LIST_ITEM_SELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnSelectItem)
+                EVT_LIST_ITEM_DESELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnDeselectItem)
 END_EVENT_TABLE()
 
 RecordsViewPanel::RecordsViewPanel(wxWindow* parent, wxWindowID id)
@@ -60,3 +61,4 @@ void RecordsViewPanel::ClearRecords()
 }
 
 void RecordsViewPanel::OnSelectItem(wxListEvent& event) { m_SelectedRecord = event.GetIndex(); }
+void RecordsViewPanel::OnDeselectItem(wxListEvent& event) { ResetSelectedRecord(); }
