@@ -1,6 +1,6 @@
 #include "RecordsViewPanel.h"
 #include "gui/wxWindowId.h"
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 #include <wx/listctrl.h>
 #include <string>
 

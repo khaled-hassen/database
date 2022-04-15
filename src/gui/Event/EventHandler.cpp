@@ -5,6 +5,7 @@
 #include "gui/Dialog/DbSelectionDialog.h"
 #include "gui/Dialog/DbCreationDialog.h"
 #include "gui/Dialog/TableCreationDialog.h"
+#include "gui/Dialog/RecordCreationDialog.h"
 
 EventHandler::EventHandler(wxFrame* parent, Database* db) : m_Parent(parent), m_Db(db) { }
 
@@ -77,7 +78,7 @@ void EventHandler::OnDropTable(const UpdateUIFn& updateUI) const
     updateUI();
 }
 
-void EventHandler::OnDeleteRecord(long index, VoidFn callback) const
+void EventHandler::OnDeleteRecord(long index, const VoidFn& callback) const
 {
     if (index < 0)
     {
@@ -91,4 +92,13 @@ void EventHandler::OnDeleteRecord(long index, VoidFn callback) const
     if (confirmId == wxID_YES) m_Db->GetTable()->DeleteRecord(index);
     confirmDialog->Destroy();
     callback();
+}
+
+void EventHandler::OnAddRecord() const
+{
+    auto* dialog = new RecordCreationDialog(m_Parent, wxID_ANY, m_Db->GetTable()->GetColumns());
+    int id = dialog->ShowModal();
+
+    if (id == wxID_OK) m_Db->GetTable()->InsertRecord(dialog->GetRecord());
+    dialog->Destroy();
 }

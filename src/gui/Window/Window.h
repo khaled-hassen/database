@@ -51,6 +51,8 @@ private:
 
     void OnDeleteRecord(wxCommandEvent& event);
 
+    void OnAddRecord(wxCommandEvent& event);
+
 // for binding events (must be at the end of the class: may change class visibility)
 DECLARE_EVENT_TABLE()
 

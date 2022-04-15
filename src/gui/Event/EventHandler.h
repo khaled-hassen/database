@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils/Pointer/Pointer.h"
+#include "Utils/Pointer.h"
 #include <functional>
 
 using VoidFn = std::function<void()>;
@@ -27,5 +27,7 @@ public:
 
     void OnDropTable(const UpdateUIFn& updateUI) const;
 
-    void OnDeleteRecord(long index, VoidFn callback) const;
+    void OnDeleteRecord(long index, const VoidFn& callback) const;
+
+    void OnAddRecord() const;
 };

@@ -1,6 +1,6 @@
 #include "Database.h"
 #include "CSVFile/CSVFile.h"
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 #include <filesystem>
 #include <iostream>
 #include <algorithm>

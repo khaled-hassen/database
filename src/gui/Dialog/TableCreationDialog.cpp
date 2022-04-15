@@ -1,5 +1,5 @@
 #include "TableCreationDialog.h"
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 #include "gui/wxWindowId.h"
 #include <wx/valtext.h>
 

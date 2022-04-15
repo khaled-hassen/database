@@ -1,5 +1,5 @@
 #include "DbCreationDialog.h"
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 
 BEGIN_EVENT_TABLE(DBCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, DBCreationDialog::OnCreate)
@@ -27,8 +27,7 @@ DBCreationDialog::DBCreationDialog(wxWindow* parent, wxWindowID id)
     mainSizer->AddSpacer(GAP / 2);
 
     mainSizer->SetMinSize(wxSize(300, -1));
-    wxDialog::SetSizer(mainSizer);
-    wxDialog::Fit();
+    wxDialog::SetSizerAndFit(mainSizer);
 }
 
 void DBCreationDialog::OnCreate(wxCommandEvent& event)

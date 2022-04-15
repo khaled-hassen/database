@@ -19,6 +19,7 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
                 EVT_MENU(wxWindowId::DROP_TABLE, Window::OnDropTable)
                 EVT_MENU(wxWindowId::DELETE_RECORD, Window::OnDeleteRecord)
                 EVT_MENU(wxWindowId::SAVE_TABLE, Window::OnSaveTable)
+                EVT_MENU(wxWindowId::ADD_RECORD, Window::OnAddRecord)
 END_EVENT_TABLE()
 
 Window::Window(const wxString& title, const wxSize& size)
@@ -175,5 +176,12 @@ void Window::OnDeleteRecord(wxCommandEvent& event)
     long index = m_RecordsPanel->GetSelectedRecord();
     m_EventHandler->OnDeleteRecord(index, [this]() { m_RecordsPanel->ResetSelectedRecord(); });
     // show the updated records
+    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
+}
+
+void Window::OnAddRecord(wxCommandEvent& event)
+{
+    if (m_RecordsPanel == nullptr) return;
+    m_EventHandler->OnAddRecord();
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }

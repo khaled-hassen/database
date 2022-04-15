@@ -30,8 +30,7 @@ DBSelectionDialog::DBSelectionDialog(wxWindow* parent, int id, const wxString& t
     auto* btnSizer = CreateButtonSizer(wxOK | wxCANCEL);
     mainSizer->Add(btnSizer);
 
-    wxDialog::SetSizer(mainSizer);
-    wxDialog::Fit();
+    wxDialog::SetSizerAndFit(mainSizer);
 }
 
 void DBSelectionDialog::OnSelectItem(wxListEvent& event) { m_DbName = event.GetText(); }

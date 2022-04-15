@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils/types/types.h"
+#include "Utils/types.h"
 #include <string>
 
 class Table
@@ -28,7 +28,7 @@ public:
     void Save() const;
 
     // insert a new row to table
-    void InsertRecord();
+    void InsertRecord(const Record& record);
 
     // display the data in the table
     void ShowRecords() const;

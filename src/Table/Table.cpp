@@ -1,7 +1,7 @@
 #include "Table.h"
-#include "Utils/ID/Id.h"
+#include "Utils/Id.h"
 #include "CSVFile/CSVFile.h"
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 #include <iostream>
 #include <utility>
 #include <algorithm>
@@ -24,39 +24,13 @@ void Table::Save() const
     file.Save(m_Columns, m_Data);
 }
 
-void Table::InsertRecord()
+void Table::InsertRecord(const Record& record)
 {
-    auto it = m_Columns.begin();
-    ++it;
-    unsigned size = m_Columns.size();
-    Record record;
-    record.reserve(size + 1); // +1 for the id column
-    record.insert({ "id", ID().ToString() });
-    while (it != m_Columns.end())
-    {
-        while (true)
-        {
-            unsigned index = it->find(":");
-            std::string col = it->substr(0, index);
-            std::string type = it->substr(index + 1);
-            std::cout << col << "(" << type << "): ";
-            std::string value;
-            std::getline(std::cin, value);
-            value = StringUtils::Trim(value);
-            try
-            {
-                if (value.empty()) throw std::exception();
-                if (type == "int") std::stoi(value); // throws exception if value not int
-                else if (type == "double") std::stod(value); // throws exception if value not double
-                // else the value type is string
-                record.insert({ col, value });
-                break;
-            } catch (...)
-            { std::cout << "Invalid value\n"; }
-        }
-        ++it;
-    }
-    m_Data.push_back(record);
+    Record tmp;
+    tmp.reserve(record.size() + 1);
+    tmp.insert({ "id", ID().ToString() });
+    tmp.insert(record.cbegin(), record.cend());
+    m_Data.push_back(tmp);
 }
 
 void Table::ShowRecords() const

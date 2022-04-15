@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "Utils/Pointer/Pointer.h"
+#include "Utils/Pointer.h"
 #include "Table/Table.h"
 
 class Database

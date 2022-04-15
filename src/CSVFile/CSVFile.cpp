@@ -2,7 +2,7 @@
 #include <sstream>
 #include <utility>
 #include <filesystem>
-#include "Utils/String/StringUtils.h"
+#include "Utils/StringUtils.h"
 
 CSVFile::CSVFile(std::string filename) : m_Filename(std::move(filename)) { }
 

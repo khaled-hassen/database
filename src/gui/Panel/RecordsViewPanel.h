@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include "Utils/types/types.h"
+#include "Utils/types.h"
 
 class wxListView;
 
