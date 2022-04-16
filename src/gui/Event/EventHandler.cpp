@@ -5,7 +5,7 @@
 #include "gui/Dialog/DbSelectionDialog.h"
 #include "gui/Dialog/DbCreationDialog.h"
 #include "gui/Dialog/TableCreationDialog.h"
-#include "gui/Dialog/RecordCreationDialog.h"
+#include "gui/Dialog/RecordEditorDialog.h"
 
 EventHandler::EventHandler(wxFrame* parent, Database* db) : m_Parent(parent), m_Db(db) { }
 
@@ -78,6 +78,15 @@ void EventHandler::OnDropTable(const UpdateUIFn& updateUI) const
     updateUI();
 }
 
+void EventHandler::OnAddRecord() const
+{
+    auto* dialog = new RecordEditorDialog(m_Parent, m_Db->GetTable()->GetColumns());
+    int id = dialog->ShowModal();
+
+    if (id == wxID_OK) m_Db->GetTable()->InsertRecord(dialog->GetRecord());
+    dialog->Destroy();
+}
+
 void EventHandler::OnDeleteRecord(long index, const VoidFn& callback) const
 {
     if (index < 0)
@@ -94,11 +103,18 @@ void EventHandler::OnDeleteRecord(long index, const VoidFn& callback) const
     callback();
 }
 
-void EventHandler::OnAddRecord() const
+void EventHandler::OnEditRecord(long index) const
 {
-    auto* dialog = new RecordCreationDialog(m_Parent, wxID_ANY, m_Db->GetTable()->GetColumns());
+    if (index < 0)
+    {
+        wxMessageBox("No record is selected", "Error", wxICON_ERROR);
+        return;
+    }
+
+    auto* dialog = new RecordEditorDialog(m_Parent, m_Db->GetTable()->GetColumns(), Mode::Edit);
+    dialog->AddDefaultValues(m_Db->GetTable()->GetRecord(index));
     int id = dialog->ShowModal();
 
-    if (id == wxID_OK) m_Db->GetTable()->InsertRecord(dialog->GetRecord());
+    if (id == wxID_OK) m_Db->GetTable()->UpdateRecord(index, dialog->GetRecord());
     dialog->Destroy();
 }

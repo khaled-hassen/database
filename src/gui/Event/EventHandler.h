@@ -27,7 +27,9 @@ public:
 
     void OnDropTable(const UpdateUIFn& updateUI) const;
 
-    void OnDeleteRecord(long index, const VoidFn& callback) const;
-
     void OnAddRecord() const;
+
+    void OnEditRecord(long index) const;
+
+    void OnDeleteRecord(long index, const VoidFn& callback) const;
 };

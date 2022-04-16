@@ -6,3 +6,6 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
+
+// exit the function when ptr is NULL
+#define CHECK_NULL(ptr) if (ptr == nullptr) return

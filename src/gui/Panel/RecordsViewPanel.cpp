@@ -7,6 +7,7 @@
 BEGIN_EVENT_TABLE(RecordsViewPanel, wxPanel)
                 EVT_LIST_ITEM_SELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnSelectItem)
                 EVT_LIST_ITEM_DESELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnDeselectItem)
+                EVT_LIST_ITEM_ACTIVATED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnActiveItem)
 END_EVENT_TABLE()
 
 RecordsViewPanel::RecordsViewPanel(wxWindow* parent, wxWindowID id)
@@ -26,7 +27,7 @@ void RecordsViewPanel::ShowRecords(const Data& data, const Columns& columns)
 {
     ClearRecords();
 
-    if (m_RecordsList == nullptr) return;
+    CHECK_NULL(m_RecordsList);
     std::string::size_type size = columns.size();
     int width = static_cast<int>(GetSize().GetWidth() / size);
 
@@ -56,9 +57,19 @@ void RecordsViewPanel::ShowRecords(const Data& data, const Columns& columns)
 
 void RecordsViewPanel::ClearRecords()
 {
-    if (m_RecordsList == nullptr) return;
+    CHECK_NULL(m_RecordsList);
     m_RecordsList->ClearAll();
 }
 
 void RecordsViewPanel::OnSelectItem(wxListEvent& event) { m_SelectedRecord = event.GetIndex(); }
+
 void RecordsViewPanel::OnDeselectItem(wxListEvent& event) { ResetSelectedRecord(); }
+
+void RecordsViewPanel::OnActiveItem(wxListEvent& event)
+{
+    CHECK_NULL(GetParent());
+
+    m_SelectedRecord = event.GetIndex();
+    wxCommandEvent ev(wxEVT_MENU, GetId());
+    wxPostEvent(GetParent(), ev);
+}

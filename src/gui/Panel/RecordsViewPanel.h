@@ -18,6 +18,8 @@ private:
 
     void OnDeselectItem(wxListEvent& event);
 
+    void OnActiveItem(wxListEvent& event);
+
 public:
     RecordsViewPanel(wxWindow* parent, wxWindowID id);
 

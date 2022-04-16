@@ -20,6 +20,7 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
                 EVT_MENU(wxWindowId::DELETE_RECORD, Window::OnDeleteRecord)
                 EVT_MENU(wxWindowId::SAVE_TABLE, Window::OnSaveTable)
                 EVT_MENU(wxWindowId::ADD_RECORD, Window::OnAddRecord)
+                EVT_MENU(wxWindowId::EDIT_RECORD, Window::OnEditRecord)
 END_EVENT_TABLE()
 
 Window::Window(const wxString& title, const wxSize& size)
@@ -70,7 +71,7 @@ Window::Window(const wxString& title, const wxSize& size)
     m_TablesPanel = new TableSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
     mainSizer->Add(m_TablesPanel, 0, wxEXPAND);
 
-    m_RecordsPanel = new RecordsViewPanel(this, wxID_ANY);
+    m_RecordsPanel = new RecordsViewPanel(this, wxWindowId::EDIT_RECORD);
     mainSizer->Add(m_RecordsPanel, 1, wxEXPAND);
 
     SetSizer(mainSizer);
@@ -148,7 +149,7 @@ void Window::UpdateTableUI(const std::string& tableName, bool update)
 
 void Window::OnOpenTable(wxCommandEvent& event)
 {
-    if (m_TablesPanel == nullptr) return;
+    CHECK_NULL(m_TablesPanel);
     const std::string& tableName = m_TablesPanel->GetTableName();
     m_Db->OpenTable(tableName);
     UpdateTableUI(tableName, false);
@@ -157,14 +158,14 @@ void Window::OnOpenTable(wxCommandEvent& event)
 void Window::UpdateTableViewUI(const std::string& tableName)
 {
     SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
-    if (m_RecordsPanel == nullptr) return;
+    CHECK_NULL(m_RecordsPanel);
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }
 
 void Window::OnDropTable(wxCommandEvent& event)
 {
     m_EventHandler->OnDropTable(BIND_FN_0Param(UpdateUIData));
-    if (m_RecordsPanel == nullptr) return;
+    CHECK_NULL(m_RecordsPanel);
     m_RecordsPanel->ClearRecords();
 }
 
@@ -172,7 +173,7 @@ void Window::OnSaveTable(wxCommandEvent& event) { m_Db->GetTable()->Save(); }
 
 void Window::OnDeleteRecord(wxCommandEvent& event)
 {
-    if (m_RecordsPanel == nullptr) return;
+    CHECK_NULL(m_RecordsPanel);
     long index = m_RecordsPanel->GetSelectedRecord();
     m_EventHandler->OnDeleteRecord(index, [this]() { m_RecordsPanel->ResetSelectedRecord(); });
     // show the updated records
@@ -181,7 +182,14 @@ void Window::OnDeleteRecord(wxCommandEvent& event)
 
 void Window::OnAddRecord(wxCommandEvent& event)
 {
-    if (m_RecordsPanel == nullptr) return;
+    CHECK_NULL(m_RecordsPanel);
     m_EventHandler->OnAddRecord();
+    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
+}
+
+void Window::OnEditRecord(wxCommandEvent& event)
+{
+    CHECK_NULL(m_RecordsPanel);
+    m_EventHandler->OnEditRecord(m_RecordsPanel->GetSelectedRecord());
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }

@@ -1,18 +1,17 @@
-#include "RecordCreationDialog.h"
+#include "RecordEditorDialog.h"
 #include <sstream>
 #include <string>
 #include <wx/valtext.h>
 #include <wx/valnum.h>
 #include "Utils/StringUtils.h"
 
-BEGIN_EVENT_TABLE(RecordCreationDialog, wxDialog)
-                EVT_BUTTON(wxID_OK, RecordCreationDialog::OnCreate)
+BEGIN_EVENT_TABLE(RecordEditorDialog, wxDialog)
+                EVT_BUTTON(wxID_OK, RecordEditorDialog::OnCreate)
 END_EVENT_TABLE()
 
-
-RecordCreationDialog::RecordCreationDialog(wxWindow* parent, wxWindowID id, const Columns& cols)
-        : wxDialog(parent, id, "Insert record", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE,
-                   wxDialogNameStr)
+RecordEditorDialog::RecordEditorDialog(wxWindow* parent, const Columns& cols, Mode mode)
+        : wxDialog(parent, wxID_ANY, "Insert record", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE,
+                   wxDialogNameStr), m_Mode(mode)
 {
     const wxFont FONT = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     const int GAP = 20;
@@ -65,7 +64,7 @@ RecordCreationDialog::RecordCreationDialog(wxWindow* parent, wxWindowID id, cons
     wxDialog::SetSizer(mainSizer);
 }
 
-void RecordCreationDialog::OnCreate(wxCommandEvent& event)
+void RecordEditorDialog::OnCreate(wxCommandEvent& event)
 {
     m_Record.clear();
     m_Record.reserve(m_DataCtrl.size());
@@ -82,4 +81,15 @@ void RecordCreationDialog::OnCreate(wxCommandEvent& event)
     }
 
     wxDialog::EndModal(wxID_OK);
+}
+
+void RecordEditorDialog::AddDefaultValues(const Record& record)
+{
+    if (m_Mode == Mode::Create) return;
+
+    for (const auto&[key, value]: record)
+    {
+        if (key == "id") continue;
+        m_DataCtrl.at(key)->SetValue(value);
+    }
 }

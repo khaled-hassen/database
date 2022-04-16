@@ -5,14 +5,22 @@
 #include <unordered_map>
 #include <string>
 
-class RecordCreationDialog : public wxDialog
+enum class Mode
+{
+    Create, Edit
+};
+
+class RecordEditorDialog : public wxDialog
 {
 private:
     std::unordered_map<std::string, wxTextCtrl*> m_DataCtrl;
     Record m_Record;
+    Mode m_Mode;
 
 public:
-    RecordCreationDialog(wxWindow* parent, wxWindowID id, const Columns& cols);
+    RecordEditorDialog(wxWindow* parent, const Columns& cols, Mode mode = Mode::Create);
+
+    void AddDefaultValues(const Record& record);
 
     [[nodiscard]] inline const Record& GetRecord() const { return m_Record; }
 

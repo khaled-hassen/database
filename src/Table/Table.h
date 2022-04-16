@@ -22,6 +22,8 @@ public:
 
     [[nodiscard]] inline const Data& GetData() const { return m_Data; }
 
+    [[nodiscard]] inline const Record& GetRecord(long index) const { return m_Data.at(index); }
+
     [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
 
     // save the table to disk
@@ -30,17 +32,11 @@ public:
     // insert a new row to table
     void InsertRecord(const Record& record);
 
-    // display the data in the table
-    void ShowRecords() const;
+    // delete a record from table
+    void DeleteRecord(long index);
 
-    // delete a record by id from table
-    void DeleteRecord(unsigned index);
-
-    // search table records and display results
-    void SearchRecord() const;
-
-    // update record by id
-    void UpdateRecord(unsigned id);
+    // update record
+    void UpdateRecord(long index, const Record& data);
 };
 
 

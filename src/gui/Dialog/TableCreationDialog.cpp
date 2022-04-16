@@ -62,7 +62,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
     for (const auto& dataCtrl: m_DataCtrls)
     {
         auto* textCtrl = dynamic_cast<wxTextCtrl*>(dataCtrl[0]);
-        if (textCtrl == nullptr) return;
+        CHECK_NULL(textCtrl);
 
         std::string colName = StringUtils::Trim(textCtrl->GetValue().ToStdString());
         if (colName.empty())
@@ -72,7 +72,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
         }
 
         auto* choiceCtrl = dynamic_cast<wxChoice*>(dataCtrl[1]);
-        if (choiceCtrl == nullptr) return;
+        CHECK_NULL(choiceCtrl);
 
         const std::string& type = choiceCtrl->GetString(choiceCtrl->GetSelection()).ToStdString();
         colName += ":" + type;
@@ -84,7 +84,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
 
 void TableCreationDialog::AddNewDataRow()
 {
-    if (m_MainSizer == nullptr) return;
+    CHECK_NULL(m_MainSizer);
 
     auto* colSizer = new wxBoxSizer(wxHORIZONTAL);
     auto* colNameTextCtrl = new wxTextCtrl(this, wxID_ANY);

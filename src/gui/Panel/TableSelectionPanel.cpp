@@ -25,14 +25,14 @@ TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const 
 
 void TableSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
 {
-    if (m_TableList == nullptr) return;
+    CHECK_NULL(m_TableList);
     m_TableList->DeleteAllItems(); // delete old names
     for (const auto& item: items) m_TableList->InsertItem(0, item);
 }
 
 void TableSelectionPanel::OnSelectTable(wxListEvent& event)
 {
-    if (GetParent() == nullptr) return;
+    CHECK_NULL(GetParent());
 
     m_TableName = event.GetText();
     wxCommandEvent ev(wxEVT_MENU, GetId());
