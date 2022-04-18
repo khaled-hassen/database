@@ -25,6 +25,11 @@
         (arg1, arg2); \
     }, eventID)
 
+// add a new tool in the toolbar
+#define ADD_TOOL(id, title, description, icon) \
+    wxFrame::GetToolBar()->AddTool(id, title, wxArtProvider::GetBitmap(icon));\
+    wxFrame::GetToolBar()->SetToolLongHelp(id, description)
+
 Window::Window(const wxString& title, const wxSize& size)
         : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, size, wxDEFAULT_FRAME_STYLE, wxFrameNameStr)
 {
@@ -54,16 +59,9 @@ Window::Window(const wxString& title, const wxSize& size)
 
     // create the toolbar
     wxFrame::CreateToolBar();
-
-    wxFrame::GetToolBar()->AddTool(wxWindowId::OPEN_DB, "Open database", wxArtProvider::GetBitmap("wxART_FOLDER_OPEN"));
-    wxFrame::GetToolBar()->SetToolLongHelp(wxWindowId::OPEN_DB, "Open database");
-
-    wxFrame::GetToolBar()->AddTool(wxWindowId::NEW_DB, "New database", wxArtProvider::GetBitmap("wxART_NEW_DIR"));
-    wxFrame::GetToolBar()->SetToolLongHelp(wxWindowId::NEW_DB, "Create a new database");
-
-    wxFrame::GetToolBar()->AddTool(wxWindowId::DROP_DB, "Delete database", wxArtProvider::GetBitmap("wxART_DELETE"));
-    wxFrame::GetToolBar()->SetToolLongHelp(wxWindowId::DROP_DB, "Delete database");
-
+    ADD_TOOL(wxWindowId::OPEN_DB, "Open database", "Open database", "wxART_FOLDER_OPEN");
+    ADD_TOOL(wxWindowId::NEW_DB, "New database", "Create a new database", "wxART_NEW_DIR");
+    ADD_TOOL(wxWindowId::DROP_DB, "Delete database", "Delete database", "wxART_DELETE");
     wxFrame::GetToolBar()->Realize();
 
     // create viewport
@@ -110,12 +108,8 @@ void Window::UpdateUIData()
 
 void Window::AddTableTools()
 {
-    GetToolBar()->AddTool(wxWindowId::NEW_TABLE, "Create Table", wxArtProvider::GetBitmap("wxART_NEW"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::NEW_TABLE, "Create a new table");
-
-    GetToolBar()->AddTool(wxWindowId::DROP_TABLE, "Delete Table", wxArtProvider::GetBitmap("wxART_CROSS_MARK"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::DROP_TABLE, "Delete the active table");
-
+    ADD_TOOL(wxWindowId::NEW_TABLE, "Create Table", "Create a new table", "wxART_NEW");
+    ADD_TOOL(wxWindowId::DROP_TABLE, "Delete Table", "Delete the active table", "wxART_CROSS_MARK");
     GetToolBar()->Realize();
 
     auto* tableMenu = new wxMenu();
@@ -128,16 +122,11 @@ void Window::AddRecordTools()
 {
     if (m_IsRecordToolsAdded) return;
     m_IsRecordToolsAdded = true;
-    GetToolBar()->AddTool(wxWindowId::ADD_RECORD, "Add record", wxArtProvider::GetBitmap("wxART_PLUS"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::ADD_RECORD, "Add a new record");
 
-    GetToolBar()->AddTool(wxWindowId::DELETE_RECORD, "Remove record", wxArtProvider::GetBitmap("wxART_MINUS"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::DELETE_RECORD, "Remove the selected record");
-
+    ADD_TOOL(wxWindowId::ADD_RECORD, "Add record", "Add a new record", "wxART_PLUS");
+    ADD_TOOL(wxWindowId::DELETE_RECORD, "Remove record", "Remove the selected record", "wxART_MINUS");
     GetToolBar()->AddStretchableSpace();
-    GetToolBar()->AddTool(wxWindowId::SAVE_TABLE, "Save table", wxArtProvider::GetBitmap("wxART_FILE_SAVE"));
-    GetToolBar()->SetToolLongHelp(wxWindowId::SAVE_TABLE, "Save table changes");
-
+    ADD_TOOL(wxWindowId::SAVE_TABLE, "Save table", "Save table changes", "wxART_FILE_SAVE");
     GetToolBar()->Realize();
 
     // Add a save action to table menu

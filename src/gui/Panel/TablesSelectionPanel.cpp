@@ -2,7 +2,7 @@
 #include <wx/listctrl.h>
 #include "gui/wxWindowId.h"
 
-BEGIN_EVENT_TABLE(TableSelectionPanel, wxPanel)
+BEGIN_EVENT_TABLE(TablesSelectionPanel, wxPanel)
                 EVT_LIST_ITEM_ACTIVATED(wxWindowId::TABLE_LIST_VIEW, TablesSelectionPanel::OnSelectTable)
 END_EVENT_TABLE()
 
