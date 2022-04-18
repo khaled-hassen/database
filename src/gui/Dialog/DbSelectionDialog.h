@@ -19,6 +19,7 @@ private:
 
     void OnItemActivated(wxListEvent& event);
 
+// for binding events (must be at the end of the class: may change class visibility)
 DECLARE_EVENT_TABLE()
 };
 

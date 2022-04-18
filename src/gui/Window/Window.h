@@ -2,7 +2,11 @@
 
 #include "gui/wxwidgets.h"
 #include "Database/Database.h"
-#include "gui/Event/EventHandler.h"
+#include "EventHandler.h"
+
+class TablesSelectionPanel;
+
+class RecordsViewPanel;
 
 class Window : public wxFrame
 {
@@ -11,10 +15,8 @@ private:
     bool m_IsRecordToolsAdded = false;
     Pointer<Database> m_Db;
     Pointer<EventHandler> m_EventHandler;
-
-    class TableSelectionPanel* m_TablesPanel = nullptr;
-
-    class RecordsViewPanel* m_RecordsPanel = nullptr;
+    TablesSelectionPanel* m_TablesPanel = nullptr;
+    RecordsViewPanel* m_RecordsPanel = nullptr;
 
 public:
     Window(const wxString& title, const wxSize& size);
@@ -29,34 +31,6 @@ private:
     void AddTableTools();
 
     void AddRecordTools();
-
-    // handle close event
-    void OnExit(wxCommandEvent& event);
-
-    void OnOpenDB(wxCommandEvent& event);
-
-    void OnCreateDB(wxCommandEvent& event);
-
-    void OnDropDB(wxCommandEvent& event);
-
-    void OnCreateTable(wxCommandEvent& event);
-
-    void OnOpenTable(wxCommandEvent& event);
-
-    void UpdateTableViewUI(const std::string& tableName);
-
-    void OnDropTable(wxCommandEvent& event);
-
-    void OnSaveTable(wxCommandEvent& event);
-
-    void OnDeleteRecord(wxCommandEvent& event);
-
-    void OnAddRecord(wxCommandEvent& event);
-
-    void OnEditRecord(wxCommandEvent& event);
-
-// for binding events (must be at the end of the class: may change class visibility)
-DECLARE_EVENT_TABLE()
 
 };
 

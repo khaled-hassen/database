@@ -5,6 +5,7 @@
 #include <wx/listctrl.h>
 #include "gui/wxWindowId.h"
 
+// statically bind events to functions
 BEGIN_EVENT_TABLE(DBSelectionDialog, wxDialog)
                 EVT_LIST_ITEM_SELECTED(wxWindowId::DB_LIST_VIEW, DBSelectionDialog::OnSelectItem)
                 EVT_LIST_ITEM_ACTIVATED(wxWindowId::DB_LIST_VIEW, DBSelectionDialog::OnItemActivated)

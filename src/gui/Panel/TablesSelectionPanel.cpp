@@ -1,12 +1,12 @@
-#include "TableSelectionPanel.h"
+#include "TablesSelectionPanel.h"
 #include <wx/listctrl.h>
 #include "gui/wxWindowId.h"
 
 BEGIN_EVENT_TABLE(TableSelectionPanel, wxPanel)
-                EVT_LIST_ITEM_ACTIVATED(wxWindowId::TABLE_LIST_VIEW, TableSelectionPanel::OnSelectTable)
+                EVT_LIST_ITEM_ACTIVATED(wxWindowId::TABLE_LIST_VIEW, TablesSelectionPanel::OnSelectTable)
 END_EVENT_TABLE()
 
-TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size)
+TablesSelectionPanel::TablesSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size)
         : wxPanel(parent, id, wxDefaultPosition, size, wxTAB_TRAVERSAL, wxPanelNameStr)
 {
     auto* sizer = new wxBoxSizer(wxVERTICAL);
@@ -23,14 +23,14 @@ TableSelectionPanel::TableSelectionPanel(wxWindow* parent, wxWindowID id, const 
     SetSizer(sizer);
 }
 
-void TableSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
+void TablesSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
 {
     CHECK_NULL(m_TableList);
     m_TableList->DeleteAllItems(); // delete old names
     for (const auto& item: items) m_TableList->InsertItem(0, item);
 }
 
-void TableSelectionPanel::OnSelectTable(wxListEvent& event)
+void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
 {
     CHECK_NULL(GetParent());
 

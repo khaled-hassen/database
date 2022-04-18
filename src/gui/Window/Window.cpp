@@ -1,36 +1,35 @@
 #include "Window.h"
 #include <wx/artprov.h>
 #include "gui/wxWindowId.h"
-#include "gui/Panel/TableSelectionPanel.h"
+#include "gui/Panel/TablesSelectionPanel.h"
 #include "gui/Panel/RecordsViewPanel.h"
-#include "gui/Event/EventHandler.h"
 
-#define BIND_FN_0Param(handler) std::bind(&Window::handler, this)
+// these macros bind Window class methods and return std::function with the appropriate arguments
+#define BIND_FN(handler) std::bind(&Window::handler, this)
 #define BIND_FN_2Params(handler) std::bind(&Window::handler, this, std::placeholders::_1, std::placeholders::_2)
 
-// statically bind events to functions
-BEGIN_EVENT_TABLE(Window, wxFrame)
-                EVT_MENU(wxID_EXIT, Window::OnExit)
-                EVT_MENU(wxWindowId::OPEN_DB, Window::OnOpenDB)
-                EVT_MENU(wxWindowId::NEW_DB, Window::OnCreateDB)
-                EVT_MENU(wxWindowId::DROP_DB, Window::OnDropDB)
-                EVT_MENU(wxWindowId::NEW_TABLE, Window::OnCreateTable)
-                EVT_MENU(wxWindowId::OPEN_TABLE, Window::OnOpenTable)
-                EVT_MENU(wxWindowId::DROP_TABLE, Window::OnDropTable)
-                EVT_MENU(wxWindowId::DELETE_RECORD, Window::OnDeleteRecord)
-                EVT_MENU(wxWindowId::SAVE_TABLE, Window::OnSaveTable)
-                EVT_MENU(wxWindowId::ADD_RECORD, Window::OnAddRecord)
-                EVT_MENU(wxWindowId::EDIT_RECORD, Window::OnEditRecord)
-END_EVENT_TABLE()
+// these macros bind wxWidgets event to the appropriate EventHandler method
+#define BIND_EVENT(eventID, handler) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
+    { \
+        std::bind(&handler, m_EventHandler.GetRawPtr())(); \
+    }, eventID)
+
+#define BIND_EVENT_1Param(eventID, handler, arg) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
+    { \
+        std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1)(arg); \
+    }, eventID)
+
+#define BIND_EVENT_2Param(eventID, handler, arg1, arg2) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
+    { \
+        std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1, std::placeholders::_2) \
+        (arg1, arg2); \
+    }, eventID)
 
 Window::Window(const wxString& title, const wxSize& size)
         : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, size, wxDEFAULT_FRAME_STYLE, wxFrameNameStr)
 {
     // initialize db
     m_Db = Pointer(new Database());
-
-    // initialize the event handler
-    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRawPtr()));
 
     // create the file menu
     auto* fileMenu = new wxMenu();
@@ -70,22 +69,30 @@ Window::Window(const wxString& title, const wxSize& size)
     // create viewport
     auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_TablesPanel = new TableSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
+    m_TablesPanel = new TablesSelectionPanel(this, wxWindowId::OPEN_TABLE, wxSize(200, 0));
     mainSizer->Add(m_TablesPanel, 0, wxEXPAND);
 
     m_RecordsPanel = new RecordsViewPanel(this, wxWindowId::EDIT_RECORD);
     mainSizer->Add(m_RecordsPanel, 1, wxEXPAND);
-
     SetSizer(mainSizer);
+
+    // initialize the event handler
+    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRawPtr(), m_RecordsPanel));
+
+    // Bind event to event EventHandler instance
+    BIND_EVENT_1Param(wxWindowId::OPEN_DB, EventHandler::OpenDatabase, BIND_FN(UpdateUIData));
+    BIND_EVENT_1Param(wxWindowId::NEW_DB, EventHandler::CreateDB, BIND_FN(UpdateUIData));
+    BIND_EVENT(wxWindowId::DROP_DB, EventHandler::DropDB);
+    BIND_EVENT_2Param(wxWindowId::OPEN_TABLE, EventHandler::OpenTable, m_TablesPanel, BIND_FN_2Params(UpdateTableUI));
+    BIND_EVENT_1Param(wxWindowId::NEW_TABLE, EventHandler::CreateTable, BIND_FN_2Params(UpdateTableUI));
+    BIND_EVENT(wxWindowId::SAVE_TABLE, EventHandler::SaveTable);
+    BIND_EVENT_1Param(wxWindowId::DROP_TABLE, EventHandler::DropTable, BIND_FN(UpdateUIData));
+    BIND_EVENT(wxWindowId::ADD_RECORD, EventHandler::AddRecord);
+    BIND_EVENT(wxWindowId::EDIT_RECORD, EventHandler::EditRecord);
+    BIND_EVENT(wxWindowId::DELETE_RECORD, EventHandler::DeleteRecord);
+
+    Bind(wxEVT_MENU, [this](wxCommandEvent&) { Close(true); }, wxID_EXIT);
 }
-
-void Window::OnExit(wxCommandEvent& event) { Close(true); }
-
-void Window::OnOpenDB(wxCommandEvent& event) { m_EventHandler->OpenDatabase(BIND_FN_0Param(UpdateUIData)); }
-
-void Window::OnCreateDB(wxCommandEvent& event) { m_EventHandler->OnCreateDB(BIND_FN_0Param(UpdateUIData)); }
-
-void Window::OnDropDB(wxCommandEvent& event) { m_EventHandler->OnDropDb(); }
 
 void Window::UpdateUIData()
 {
@@ -142,58 +149,11 @@ void Window::AddRecordTools()
     GetMenuBar()->Append(recordMenu, "&Record");
 }
 
-void Window::OnCreateTable(wxCommandEvent& event) { m_EventHandler->OnCreateTable(BIND_FN_2Params(UpdateTableUI)); }
-
 void Window::UpdateTableUI(const std::string& tableName, bool update)
 {
     if (update) UpdateUIData();
-    UpdateTableViewUI(tableName);
-    AddRecordTools();
-}
 
-void Window::OnOpenTable(wxCommandEvent& event)
-{
-    CHECK_NULL(m_TablesPanel);
-    const std::string& tableName = m_TablesPanel->GetTableName();
-    m_Db->OpenTable(tableName);
-    UpdateTableUI(tableName, false);
-}
-
-void Window::UpdateTableViewUI(const std::string& tableName)
-{
     SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
-    CHECK_NULL(m_RecordsPanel);
-    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
-}
-
-void Window::OnDropTable(wxCommandEvent& event)
-{
-    m_EventHandler->OnDropTable(BIND_FN_0Param(UpdateUIData));
-    CHECK_NULL(m_RecordsPanel);
-    m_RecordsPanel->ClearRecords();
-}
-
-void Window::OnSaveTable(wxCommandEvent& event) { m_Db->GetTable()->Save(); }
-
-void Window::OnDeleteRecord(wxCommandEvent& event)
-{
-    CHECK_NULL(m_RecordsPanel);
-    long index = m_RecordsPanel->GetSelectedRecord();
-    m_EventHandler->OnDeleteRecord(index, [this]() { m_RecordsPanel->ResetSelectedRecord(); });
-    // show the updated records
-    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
-}
-
-void Window::OnAddRecord(wxCommandEvent& event)
-{
-    CHECK_NULL(m_RecordsPanel);
-    m_EventHandler->OnAddRecord();
-    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
-}
-
-void Window::OnEditRecord(wxCommandEvent& event)
-{
-    CHECK_NULL(m_RecordsPanel);
-    m_EventHandler->OnEditRecord(m_RecordsPanel->GetSelectedRecord());
-    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
+    m_EventHandler->UpdateRecordsView();
+    AddRecordTools();
 }

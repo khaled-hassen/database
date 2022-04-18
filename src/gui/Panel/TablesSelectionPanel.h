@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class TableSelectionPanel : public wxPanel
+class TablesSelectionPanel : public wxPanel
 {
 private:
     class wxListView* m_TableList = nullptr;
@@ -12,7 +12,7 @@ private:
     std::string m_TableName;
 
 public:
-    TableSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size);
+    TablesSelectionPanel(wxWindow* parent, wxWindowID id, const wxSize& size);
 
     [[nodiscard]] inline const std::string& GetTableName() const { return m_TableName; }
 
