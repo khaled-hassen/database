@@ -7,12 +7,15 @@ using VoidFn = std::function<void()>;
 using UpdateUIFn = VoidFn;
 using UpdateTableUIFn = std::function<void(const std::string&, bool)>;
 
+class Database;
+
+class wxFrame;
+
 class EventHandler
 {
 private:
-    class Database* m_Db = nullptr;
-
-    class wxFrame* m_Parent = nullptr;
+    Database* m_Db = nullptr;
+    wxFrame* m_Parent = nullptr;
 
 public:
     EventHandler(wxFrame* parent, Database* db);

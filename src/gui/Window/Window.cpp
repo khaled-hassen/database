@@ -35,15 +35,17 @@ Window::Window(const wxString& title, const wxSize& size)
     // create the file menu
     auto* fileMenu = new wxMenu();
     // & underlines the first character, so it can be accessible via the ALT+F shortcut
-    fileMenu->Append(wxWindowId::OPEN_DB, "&Open database \tCtrl-O", "Open database");
-    fileMenu->Append(wxWindowId::NEW_DB, "&Create database \tCtrl-N", "Create a new database");
-    fileMenu->Append(wxWindowId::DROP_DB, "&Delete database \tCtrl-X", "Delete database");
-    fileMenu->AppendSeparator();
     fileMenu->Append(wxID_EXIT, "&Quit \tCtrl-Q");
 
-    // create the menu bar
+    auto* dbMenu = new wxMenu();
+    dbMenu->Append(wxWindowId::OPEN_DB, "&Open database \tCtrl-O", "Open database");
+    dbMenu->Append(wxWindowId::NEW_DB, "&Create database \tCtrl-N", "Create a new database");
+    dbMenu->Append(wxWindowId::DROP_DB, "&Delete database \tCtrl-X", "Delete database");
+
     auto* menuBar = new wxMenuBar();
+    // create the menu bar
     menuBar->Append(fileMenu, "&File");
+    menuBar->Append(dbMenu, "&Database");
     wxFrame::SetMenuBar(menuBar);
 
     // create a status bar
@@ -109,10 +111,10 @@ void Window::AddTableTools()
 
     GetToolBar()->Realize();
 
-    wxMenu* menu = GetMenuBar()->GetMenu(0);
-    menu->InsertSeparator(3);
-    menu->Insert(4, wxWindowId::NEW_TABLE, "&Create table \tCtrl-Shift-N", "Create a new table");
-    menu->Insert(5, wxWindowId::DROP_TABLE, "&Delete table \tCtrl-Shift-X", "Delete the active table");
+    auto* tableMenu = new wxMenu();
+    tableMenu->Append(wxWindowId::NEW_TABLE, "&Create table \tCtrl-Shift-N", "Create a new table");
+    tableMenu->Append(wxWindowId::DROP_TABLE, "&Delete table \tCtrl-Shift-X", "Delete the active table");
+    GetMenuBar()->Append(tableMenu, "&Table");
 }
 
 void Window::AddRecordTools()
@@ -131,11 +133,13 @@ void Window::AddRecordTools()
 
     GetToolBar()->Realize();
 
-    wxMenu* menu = GetMenuBar()->GetMenu(0);
-    menu->Insert(6, wxWindowId::SAVE_TABLE, "&Save table \tCtrl-S", "Save table changes");
-    menu->InsertSeparator(7);
-    menu->Insert(8, wxWindowId::ADD_RECORD, "&Add record \tCtrl-A", "Add a new record");
-    menu->Insert(9, wxWindowId::DELETE_RECORD, "&Remove record \tCtrl-D", "Remove the selected record");
+    // Add a save action to table menu
+    GetMenuBar()->GetMenu(2)->Append(wxWindowId::SAVE_TABLE, "&Save table \tCtrl-S", "Save table changes");
+
+    auto* recordMenu = new wxMenu();
+    recordMenu->Append(wxWindowId::ADD_RECORD, "&Add record \tCtrl-A", "Add a new record");
+    recordMenu->Append(wxWindowId::DELETE_RECORD, "&Remove record \tCtrl-D", "Remove the selected record");
+    GetMenuBar()->Append(recordMenu, "&Record");
 }
 
 void Window::OnCreateTable(wxCommandEvent& event) { m_EventHandler->OnCreateTable(BIND_FN_2Params(UpdateTableUI)); }
