@@ -19,7 +19,7 @@
         std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1)(arg); \
     }, eventID)
 
-#define BIND_EVENT_2Param(eventID, handler, arg1, arg2) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
+#define BIND_EVENT_2Params(eventID, handler, arg1, arg2) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
     { \
         std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1, std::placeholders::_2) \
         (arg1, arg2); \
@@ -83,7 +83,7 @@ Window::Window(const wxString& title, const wxSize& size)
     BIND_EVENT_1Param(wxWindowId::OPEN_DB, EventHandler::OpenDatabase, BIND_FN(UpdateUIData));
     BIND_EVENT_1Param(wxWindowId::NEW_DB, EventHandler::CreateDB, BIND_FN(UpdateUIData));
     BIND_EVENT(wxWindowId::DROP_DB, EventHandler::DropDB);
-    BIND_EVENT_2Param(wxWindowId::OPEN_TABLE, EventHandler::OpenTable, m_TablesPanel, BIND_FN_2Params(UpdateTableUI));
+    BIND_EVENT_2Params(wxWindowId::OPEN_TABLE, EventHandler::OpenTable, m_TablesPanel, BIND_FN_2Params(UpdateTableUI));
     BIND_EVENT_1Param(wxWindowId::NEW_TABLE, EventHandler::CreateTable, BIND_FN_2Params(UpdateTableUI));
     BIND_EVENT(wxWindowId::SAVE_TABLE, EventHandler::SaveTable);
     BIND_EVENT_1Param(wxWindowId::DROP_TABLE, EventHandler::DropTable, BIND_FN(UpdateUIData));
