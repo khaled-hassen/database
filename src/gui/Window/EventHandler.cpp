@@ -9,7 +9,6 @@
 #include "gui/Panel/RecordsViewPanel.h"
 #include "gui/Panel/TablesSelectionPanel.h"
 
-
 EventHandler::EventHandler(wxFrame* parent, Database* db, RecordsViewPanel* recordsPanel)
         : m_Parent(parent), m_Db(db), m_RecordsPanel(recordsPanel) { }
 
@@ -18,7 +17,6 @@ void EventHandler::UpdateRecordsView() const
     CHECK_NULL(m_RecordsPanel);
     m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
 }
-
 
 void EventHandler::OpenDatabase(const UpdateUIFn& updateUI) const
 {

@@ -1,22 +1,21 @@
 #pragma once
 
 #include "Utils/types.h"
-#include <string>
+#include "Savable.h"
 
-class Table
+class Table : public Savable
 {
 private:
-    std::string m_Path;
     std::string m_Name;
     Columns m_Columns;
     Data m_Data;
 
 public:
+    // to be called when creating a new table
     Table(std::string path, std::string name, Columns columns);
 
-    Table(std::string path, std::string name, Columns columns, const Data& data);
-
-    [[nodiscard]] inline const std::string& GetPath() const { return m_Path; }
+    // to be called when opening a saved table
+    Table(std::string path, std::string name);
 
     [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
 
@@ -26,8 +25,11 @@ public:
 
     [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
 
-    // save the table to disk
-    void Save() const;
+    // Read the table data stored in the file
+    void Read() override;
+
+    // save the table to file
+    void Save() override;
 
     // insert a new row to table
     void InsertRecord(const Record& record);

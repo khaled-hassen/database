@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "Utils/Pointer.h"
-#include "Table/Table.h"
+#include "Table.h"
 
 class Database
 {

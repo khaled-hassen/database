@@ -1,5 +1,4 @@
 #include "Database.h"
-#include "CSVFile/CSVFile.h"
 #include "Utils/StringUtils.h"
 #include <filesystem>
 #include <iostream>
@@ -100,7 +99,7 @@ void Database::DropDb(const std::string& dbName)
     fs::remove_all(tmpPath);
 }
 
-std::string Database::CreateTablePath(const std::string& tableName) const { return m_Path + "/" + tableName + ".csv"; }
+std::string Database::CreateTablePath(const std::string& tableName) const { return m_Path + "/" + tableName + ".tb"; }
 
 void Database::CreateTable(const std::string& tableName, const Columns& cols)
 {
@@ -119,11 +118,8 @@ void Database::OpenTable(const std::string& tableName)
     CheckOpenedDb();
     CloseTable();
     const std::string& path = CreateTablePath(tableName);
-    CSVFile file(path);
-    Columns columns;
-    Data data;
-    file.Read(columns, data);
-    m_Table = Pointer(new Table(path, tableName, columns, data));
+    m_Table = Pointer(new Table(path, tableName));
+    m_Table->Read();
 }
 
 const Pointer<Table>& Database::GetTable() const
@@ -144,9 +140,8 @@ void Database::DropTable()
 {
     std::string name = GetTable()->GetName();
     std::string path = GetTable()->GetPath();
+    m_Table->Delete();
     CloseTable();
     // remove the tableName from the tableNames vector
     m_TableNames.erase(std::remove(m_TableNames.begin(), m_TableNames.end(), name), m_TableNames.end());
-    CSVFile file(path);
-    file.Delete();
 }
