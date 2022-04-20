@@ -33,9 +33,6 @@
 Window::Window(const wxString& title, const wxSize& size)
         : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, size, wxDEFAULT_FRAME_STYLE, wxFrameNameStr)
 {
-    // initialize db
-    m_Db = Pointer(new Database());
-
     // create the file menu
     auto* fileMenu = new wxMenu();
     // & underlines the first character, so it can be accessible via the ALT+F shortcut
@@ -75,7 +72,7 @@ Window::Window(const wxString& title, const wxSize& size)
     SetSizer(mainSizer);
 
     // initialize the event handler
-    m_EventHandler = Pointer(new EventHandler(this, m_Db.GetRawPtr(), m_RecordsPanel));
+    m_EventHandler = Pointer(new EventHandler(this, m_RecordsPanel));
 
     // Bind event to event EventHandler instance
     BIND_EVENT_1Param(wxWindowId::OPEN_DB, EventHandler::OpenDatabase, BIND_FN(UpdateUIData));
@@ -100,9 +97,10 @@ void Window::UpdateUIData()
         m_IsTableToolsAdded = true;
     }
 
-    SetStatusText(wxString::Format("Opened database: %s", m_Db->GetDbName().c_str()), 0);
+    const Database* db = m_EventHandler->GetDatabase();
+    SetStatusText(wxString::Format("Opened database: %s", db->GetName().c_str()), 0);
     wxFrame::SetStatusText("", 1);
-    const std::vector<std::string>& tables = m_Db->GetTableNames();
+    const std::vector<std::string>& tables = db->GetTableNames();
     if (m_TablesPanel) m_TablesPanel->ShowTablesList(tables);
 }
 

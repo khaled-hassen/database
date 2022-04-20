@@ -3,11 +3,11 @@
 #include "Utils/Pointer.h"
 #include <functional>
 #include <wx/event.h>
+#include "Utils/Pointer.h"
+#include "Database/Database.h"
 
 using UpdateUIFn = std::function<void()>;
 using UpdateTableUIFn = std::function<void(const std::string&, bool)>;
-
-class Database;
 
 class wxFrame;
 
@@ -16,18 +16,20 @@ class RecordsViewPanel;
 class EventHandler
 {
 private:
-    Database* m_Db = nullptr;
+    Pointer<Database> m_Database;
     wxFrame* m_Parent = nullptr;
     RecordsViewPanel* m_RecordsPanel = nullptr;
 
 public:
-    EventHandler(wxFrame* parent, Database* db, RecordsViewPanel* recordsPanel);
+    EventHandler(wxFrame* parent, RecordsViewPanel* recordsPanel);
+
+    [[nodiscard]] inline const Database* GetDatabase() const { return m_Database.GetRawPtr(); }
 
     void UpdateRecordsView() const;
 
-    void OpenDatabase(const UpdateUIFn& updateUI) const;
+    void OpenDatabase(const UpdateUIFn& updateUI);
 
-    void CreateDB(const UpdateUIFn& updateUI) const;
+    void CreateDB(const UpdateUIFn& updateUI);
 
     void DropDB() const;
 
@@ -44,5 +46,4 @@ public:
     void EditRecord() const;
 
     void DeleteRecord() const;
-
 };

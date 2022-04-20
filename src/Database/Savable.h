@@ -17,9 +17,14 @@ public:
 
     inline void CloseFile() { m_File.close(); }
 
+    // create a new file with the name passed to the constructor
     void CreateFile();
 
+    // open file with the name passed to the constructor
     void OpenFile();
+
+    // delete the file with the name passed to the constructor from disk
+    void Delete();
 
     // write size_t value to a binary file
     void WriteSize(size_t size);
@@ -36,7 +41,4 @@ public:
     virtual void Read() = 0;
 
     virtual void Save() = 0;
-
-    // delete the file from disk
-    virtual void Delete() final; // final will prohibit method overriding
 };

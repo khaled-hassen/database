@@ -4,57 +4,58 @@
 #include <vector>
 #include "Utils/Pointer.h"
 #include "Table.h"
+#include "Savable.h"
 
-class Database
+class Database : public Savable
 {
 private:
-    static std::string s_BaseName;
+    static std::string s_Root;
+    static std::string s_Extension;
+    static std::string s_TableExtension;
     std::string m_Name;
-    std::string m_Path;
     std::vector<std::string> m_TableNames;
     Pointer<Table> m_Table;
+    bool m_Open = false;
 
 private:
-    // load the database table names into memory
-    void LoadTablesNames();
+    [[nodiscard]] static std::string CreateTablePath(const std::string& tableName);
 
     // check if there's an opened database
     void CheckOpenedDb() const;
 
     // check if the database exists
-    static void CheckDbExists(const std::string& dbName);
+    void CheckDbExists();
 
     // check if there's an opened table
     void CheckOpenedTable() const;
 
-    [[nodiscard]] std::string CreateTablePath(const std::string& tableName) const;
+    // read the database tables from disk
+    void Read() override;
+
+    // save the database to disk
+    void Save() override;
 
 public:
     // scan the exe folder for available databases
     static std::vector<std::string> ScanForDatabases();
 
-    Database() = default;
+    explicit Database(const std::string& name);
 
     // create and open the database
-    void CreateDb(const std::string& dbName);
+    void CreateDb();
 
     // OpenDb the database: load all the tables into memory
-    void OpenDb(const std::string& dbName);
+    void OpenDb();
 
     // close the opened database
     void CloseDb();
 
-    [[nodiscard]] inline const std::string& GetDbName() const { return m_Name; }
+    [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
 
     [[nodiscard]] inline const std::vector<std::string>& GetTableNames() const { return m_TableNames; }
 
-    [[nodiscard]] inline bool IsDbOpen() const { return !m_Name.empty() && !m_Path.empty(); }
-
-    // display the database tables
-    void ShowTables() const;
-
     // delete database
-    void DropDb(const std::string& dbName);
+    static void DropDb(const std::string& dbName);
 
     // create a new database table
     void CreateTable(const std::string& tableName, const Columns& cols);

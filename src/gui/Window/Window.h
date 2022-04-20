@@ -1,7 +1,6 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include "Database/Database.h"
 #include "EventHandler.h"
 
 class TablesSelectionPanel;
@@ -13,7 +12,6 @@ class Window : public wxFrame
 private:
     bool m_IsTableToolsAdded = false;
     bool m_IsRecordToolsAdded = false;
-    Pointer<Database> m_Db;
     Pointer<EventHandler> m_EventHandler;
     TablesSelectionPanel* m_TablesPanel = nullptr;
     RecordsViewPanel* m_RecordsPanel = nullptr;

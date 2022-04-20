@@ -1,5 +1,4 @@
 #include "EventHandler.h"
-#include "Database/Database.h"
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
 #include "gui/Dialog/DbSelectionDialog.h"
@@ -9,36 +8,39 @@
 #include "gui/Panel/RecordsViewPanel.h"
 #include "gui/Panel/TablesSelectionPanel.h"
 
-EventHandler::EventHandler(wxFrame* parent, Database* db, RecordsViewPanel* recordsPanel)
-        : m_Parent(parent), m_Db(db), m_RecordsPanel(recordsPanel) { }
+EventHandler::EventHandler(wxFrame* parent, RecordsViewPanel* recordsPanel)
+        : m_Parent(parent), m_RecordsPanel(recordsPanel) { }
 
 void EventHandler::UpdateRecordsView() const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(m_RecordsPanel);
-    m_RecordsPanel->ShowRecords(m_Db->GetTable()->GetData(), m_Db->GetTable()->GetColumns());
+    m_RecordsPanel->ShowRecords(m_Database->GetTable()->GetData(), m_Database->GetTable()->GetColumns());
 }
 
-void EventHandler::OpenDatabase(const UpdateUIFn& updateUI) const
+void EventHandler::OpenDatabase(const UpdateUIFn& updateUI)
 {
     auto* dialog = new DBSelectionDialog(m_Parent, wxID_ANY, "Open database");
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
-        m_Db->OpenDb(dialog->GetDbName());
+        m_Database = Pointer(new Database(dialog->GetDbName()));
+        m_Database->OpenDb();
         updateUI();
     }
     dialog->Destroy();
 }
 
-void EventHandler::CreateDB(const UpdateUIFn& updateUI) const
+void EventHandler::CreateDB(const UpdateUIFn& updateUI)
 {
     auto* dialog = new DBCreationDialog(m_Parent, wxID_ANY);
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
-        m_Db->CreateDb(dialog->GetDbName());
+        m_Database = Pointer(new Database(dialog->GetDbName()));
+        m_Database->CreateDb();
         updateUI();
     }
     dialog->Destroy();
@@ -55,9 +57,10 @@ void EventHandler::DropDB() const
         const auto& message = wxString::Format("Are you sure you want to delete: %s ?", dbName.c_str());
         auto* confirmDialog = new wxMessageDialog(dialog, message, "Delete database", wxYES | wxNO);
         int confirmId = confirmDialog->ShowModal();
-        if (confirmId == wxID_YES) m_Db->DropDb(dbName);
+        if (confirmId == wxID_YES) Database::DropDb(dbName);
         confirmDialog->Destroy();
-        if (!m_Db->IsDbOpen()) m_Parent->SetStatusText("No database is opened", 0);
+        if (m_Database != nullptr && m_Database->GetName() == dbName)
+            m_Parent->SetStatusText("No database is opened", 0);
     }
 
     dialog->Destroy();
@@ -65,37 +68,44 @@ void EventHandler::DropDB() const
 
 void EventHandler::OpenTable(TablesSelectionPanel* tablesPanel, const UpdateTableUIFn& updateTableUI) const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(tablesPanel);
     const std::string& tableName = tablesPanel->GetTableName();
-    m_Db->OpenTable(tableName);
+    m_Database->OpenTable(tableName);
     updateTableUI(tableName, false);
 }
 
 void EventHandler::CreateTable(const UpdateTableUIFn& updateTableUI) const
 {
+    CHECK_NULL(m_Database);
     auto* dialog = new TableCreationDialog(m_Parent, wxID_ANY);
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
-        m_Db->CreateTable(dialog->GetTableName(), dialog->GetColumns());
-        updateTableUI(m_Db->GetTable()->GetName(), true);
+        m_Database->CreateTable(dialog->GetTableName(), dialog->GetColumns());
+        updateTableUI(m_Database->GetTable()->GetName(), true);
     }
     dialog->Destroy();
 }
 
-void EventHandler::SaveTable() const { m_Db->GetTable()->Save(); }
+void EventHandler::SaveTable() const
+{
+    CHECK_NULL(m_Database);
+    m_Database->GetTable()->Save();
+}
 
 void EventHandler::DropTable(const UpdateUIFn& updateUI) const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(m_RecordsPanel);
-    const std::string& tableName = m_Db->GetTable()->GetName();
+    const std::string& tableName = m_Database->GetTable()->GetName();
     const auto& message = wxString::Format("Are you sure you want to delete: %s ?", tableName.c_str());
     auto* confirmDialog = new wxMessageDialog(m_Parent, message, "Delete table", wxYES | wxNO);
     int confirmId = confirmDialog->ShowModal();
     if (confirmId == wxID_YES)
     {
-        m_Db->DropTable();
+        m_Database->DropTable();
         m_RecordsPanel->ClearRecords();
         updateUI();
     }
@@ -104,14 +114,15 @@ void EventHandler::DropTable(const UpdateUIFn& updateUI) const
 
 void EventHandler::AddRecord() const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(m_RecordsPanel);
 
-    auto* dialog = new RecordEditorDialog(m_Parent, m_Db->GetTable()->GetColumns());
+    auto* dialog = new RecordEditorDialog(m_Parent, m_Database->GetTable()->GetColumns());
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
-        m_Db->GetTable()->InsertRecord(dialog->GetRecord());
+        m_Database->GetTable()->InsertRecord(dialog->GetRecord());
         UpdateRecordsView();
     }
     dialog->Destroy();
@@ -119,6 +130,7 @@ void EventHandler::AddRecord() const
 
 void EventHandler::DeleteRecord() const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(m_RecordsPanel);
     long index = m_RecordsPanel->GetSelectedRecord();
     if (index < 0)
@@ -132,7 +144,7 @@ void EventHandler::DeleteRecord() const
     int confirmId = confirmDialog->ShowModal();
     if (confirmId == wxID_YES)
     {
-        m_Db->GetTable()->DeleteRecord(index);
+        m_Database->GetTable()->DeleteRecord(index);
         m_RecordsPanel->ResetSelectedRecord();
         UpdateRecordsView();
     }
@@ -141,6 +153,7 @@ void EventHandler::DeleteRecord() const
 
 void EventHandler::EditRecord() const
 {
+    CHECK_NULL(m_Database);
     CHECK_NULL(m_RecordsPanel);
     long index = m_RecordsPanel->GetSelectedRecord();
     if (index < 0)
@@ -149,13 +162,13 @@ void EventHandler::EditRecord() const
         return;
     }
 
-    auto* dialog = new RecordEditorDialog(m_Parent, m_Db->GetTable()->GetColumns(), Mode::Edit);
-    dialog->AddDefaultValues(m_Db->GetTable()->GetRecord(index));
+    auto* dialog = new RecordEditorDialog(m_Parent, m_Database->GetTable()->GetColumns(), Mode::Edit);
+    dialog->AddDefaultValues(m_Database->GetTable()->GetRecord(index));
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
-        m_Db->GetTable()->UpdateRecord(index, dialog->GetRecord());
+        m_Database->GetTable()->UpdateRecord(index, dialog->GetRecord());
         UpdateRecordsView();
     }
     dialog->Destroy();
