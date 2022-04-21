@@ -44,7 +44,7 @@ void Database::OpenDb()
     CloseDb();
     CheckDbExists();
     m_Open = true;
-    Read();
+    Load();
 }
 
 void Database::CheckOpenedDb() const { if (!m_Open) throw std::exception("There is no opened database"); }
@@ -91,7 +91,7 @@ void Database::OpenTable(const std::string& tableName)
     CloseTable();
     const std::string& path = CreateTablePath(tableName);
     m_Table = Pointer(new Table(path, tableName));
-    m_Table->Read();
+    m_Table->Load();
 }
 
 const Pointer<Table>& Database::GetTable() const
@@ -119,7 +119,7 @@ void Database::DropTable()
     Save();
 }
 
-void Database::Read()
+void Database::Load()
 {
     OpenFile();
     size_t size = ReadSize();

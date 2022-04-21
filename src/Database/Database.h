@@ -30,7 +30,7 @@ private:
     void CheckOpenedTable() const;
 
     // read the database tables from disk
-    void Read() override;
+    void Load() override;
 
     // save the database to disk
     void Save() override;

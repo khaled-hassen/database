@@ -1,8 +1,6 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include <string>
-#include <vector>
 
 class TablesSelectionPanel : public wxPanel
 {
@@ -18,6 +16,8 @@ public:
 
     // display the tables list to the ui
     void ShowTablesList(const std::vector<std::string>& items);
+
+    void ClearTables();
 
 private:
     void OnSelectTable(class wxListEvent& event);

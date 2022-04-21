@@ -38,7 +38,7 @@ public:
     // read std::string value from a binary file and return it
     std::string ReadString();
 
-    virtual void Read() = 0;
+    virtual void Load() = 0;
 
     virtual void Save() = 0;
 };

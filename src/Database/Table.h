@@ -2,10 +2,12 @@
 
 #include "Utils/types.h"
 #include "Savable.h"
+#include "Utils/IDGenerator.h"
 
 class Table : public Savable
 {
 private:
+    IDGenerator m_IDGenerator;
     std::string m_Name;
     Columns m_Columns;
     Data m_Data;
@@ -26,7 +28,7 @@ public:
     [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
 
     // Read the table data stored in the file
-    void Read() override;
+    void Load() override;
 
     // save the table to file
     void Save() override;

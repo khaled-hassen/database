@@ -3,27 +3,12 @@
 #include "gui/wxWindowId.h"
 #include "gui/Panel/TablesSelectionPanel.h"
 #include "gui/Panel/RecordsViewPanel.h"
-
-// these macros bind Window class methods and return std::function with the appropriate arguments
-#define BIND_FN(handler) std::bind(&Window::handler, this)
-#define BIND_FN_2Params(handler) std::bind(&Window::handler, this, std::placeholders::_1, std::placeholders::_2)
+#include "EventHandler.h"
+#include "Database/Database.h"
 
 // these macros bind wxWidgets event to the appropriate EventHandler method
 #define BIND_EVENT(eventID, handler) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
-    { \
-        std::bind(&handler, m_EventHandler.GetRawPtr())(); \
-    }, eventID)
-
-#define BIND_EVENT_1Param(eventID, handler, arg) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
-    { \
-        std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1)(arg); \
-    }, eventID)
-
-#define BIND_EVENT_2Params(eventID, handler, arg1, arg2) Bind(wxEVT_MENU, [this](wxCommandEvent&) \
-    { \
-        std::bind(&handler, m_EventHandler.GetRawPtr(), std::placeholders::_1, std::placeholders::_2) \
-        (arg1, arg2); \
-    }, eventID)
+    { std::bind(&handler, m_EventHandler.GetRawPtr())(); }, eventID)
 
 // add a new tool in the toolbar
 #define ADD_TOOL(id, title, description, icon) \
@@ -72,16 +57,16 @@ Window::Window(const wxString& title, const wxSize& size)
     SetSizer(mainSizer);
 
     // initialize the event handler
-    m_EventHandler = Pointer(new EventHandler(this, m_RecordsPanel));
+    m_EventHandler = Pointer(new EventHandler(this));
 
     // Bind event to event EventHandler instance
-    BIND_EVENT_1Param(wxWindowId::OPEN_DB, EventHandler::OpenDatabase, BIND_FN(UpdateUIData));
-    BIND_EVENT_1Param(wxWindowId::NEW_DB, EventHandler::CreateDB, BIND_FN(UpdateUIData));
+    BIND_EVENT(wxWindowId::OPEN_DB, EventHandler::OpenDatabase);
+    BIND_EVENT(wxWindowId::NEW_DB, EventHandler::CreateDB);
     BIND_EVENT(wxWindowId::DROP_DB, EventHandler::DropDB);
-    BIND_EVENT_2Params(wxWindowId::OPEN_TABLE, EventHandler::OpenTable, m_TablesPanel, BIND_FN_2Params(UpdateTableUI));
-    BIND_EVENT_1Param(wxWindowId::NEW_TABLE, EventHandler::CreateTable, BIND_FN_2Params(UpdateTableUI));
+    BIND_EVENT(wxWindowId::OPEN_TABLE, EventHandler::OpenTable);
+    BIND_EVENT(wxWindowId::NEW_TABLE, EventHandler::CreateTable);
     BIND_EVENT(wxWindowId::SAVE_TABLE, EventHandler::SaveTable);
-    BIND_EVENT_1Param(wxWindowId::DROP_TABLE, EventHandler::DropTable, BIND_FN(UpdateUIData));
+    BIND_EVENT(wxWindowId::DROP_TABLE, EventHandler::DropTable);
     BIND_EVENT(wxWindowId::ADD_RECORD, EventHandler::AddRecord);
     BIND_EVENT(wxWindowId::EDIT_RECORD, EventHandler::EditRecord);
     BIND_EVENT(wxWindowId::DELETE_RECORD, EventHandler::DeleteRecord);
@@ -136,11 +121,8 @@ void Window::AddRecordTools()
     GetMenuBar()->Append(recordMenu, "&Record");
 }
 
-void Window::UpdateTableUI(const std::string& tableName, bool update)
+void Window::ClearTableView()
 {
-    if (update) UpdateUIData();
-
-    SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
-    m_EventHandler->UpdateRecordsView();
-    AddRecordTools();
+    CHECK_NULL(m_TablesPanel);
+    m_TablesPanel->ClearTables();
 }

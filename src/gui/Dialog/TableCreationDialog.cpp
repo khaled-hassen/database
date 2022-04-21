@@ -1,7 +1,7 @@
 #include "TableCreationDialog.h"
 #include "Utils/StringUtils.h"
 #include "gui/wxWindowId.h"
-#include <wx/valtext.h>
+#include <array>
 
 BEGIN_EVENT_TABLE(TableCreationDialog, wxDialog)
                 EVT_BUTTON(wxID_OK, TableCreationDialog::OnCreate)
@@ -58,7 +58,7 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
     }
 
     m_Columns.reserve(m_DataCtrls.size() + 1);
-    m_Columns.push_back("id:ID");
+    m_Columns["id"] = "ID";
     for (const auto& dataCtrl: m_DataCtrls)
     {
         auto* textCtrl = dynamic_cast<wxTextCtrl*>(dataCtrl[0]);
@@ -75,8 +75,8 @@ void TableCreationDialog::OnCreate(wxCommandEvent& event)
         CHECK_NULL(choiceCtrl);
 
         const std::string& type = choiceCtrl->GetString(choiceCtrl->GetSelection()).ToStdString();
-        colName += ":" + type;
-        m_Columns.push_back(colName);
+        // removing the spaces because it messes up the input order in unordered_map
+        m_Columns[StringUtils::Replace(colName, ' ', '-')] = type;
     }
 
     wxDialog::EndModal(wxID_OK);

@@ -30,6 +30,11 @@ void TablesSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
     for (const auto& item: items) m_TableList->InsertItem(0, item);
 }
 
+void TablesSelectionPanel::ClearTables(){
+    CHECK_NULL(m_TableList);
+    m_TableList->ClearAll();
+}
+
 void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
 {
     CHECK_NULL(GetParent());

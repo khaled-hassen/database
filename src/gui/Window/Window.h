@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include "EventHandler.h"
+#include "Utils/Pointer.h"
 
 class TablesSelectionPanel;
 
@@ -12,24 +12,26 @@ class Window : public wxFrame
 private:
     bool m_IsTableToolsAdded = false;
     bool m_IsRecordToolsAdded = false;
-    Pointer<EventHandler> m_EventHandler;
+    Pointer<class EventHandler> m_EventHandler;
     TablesSelectionPanel* m_TablesPanel = nullptr;
     RecordsViewPanel* m_RecordsPanel = nullptr;
 
 public:
     Window(const wxString& title, const wxSize& size);
 
-private:
     // update the ui with the new data
     void UpdateUIData();
 
-    // update the table view ui
-    void UpdateTableUI(const std::string& tableName, bool update);
+    void ClearTableView();
 
-    void AddTableTools();
+    [[nodiscard]] RecordsViewPanel* GetRecordsPanel() const { return m_RecordsPanel; }
+
+    [[nodiscard]] TablesSelectionPanel* GetTablesPanel() const { return m_TablesPanel; }
 
     void AddRecordTools();
 
+private:
+    void AddTableTools();
 };
 
 

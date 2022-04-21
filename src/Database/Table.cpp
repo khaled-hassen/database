@@ -1,7 +1,5 @@
 #include "Table.h"
-#include "Utils/Id.h"
-#include <utility>
-#include <algorithm>
+#include "Utils/IDGenerator.h"
 
 Table::Table(std::string path, std::string name, Columns columns)
         : Savable(std::move(path)), m_Name(std::move(name)), m_Columns(std::move(columns)) { }
@@ -13,7 +11,7 @@ void Table::InsertRecord(const Record& record)
 {
     Record tmp;
     tmp.reserve(record.size() + 1);
-    tmp.insert({ "id", ID().ToString() });
+    tmp.insert({ "id", m_IDGenerator.GenerateID() });
     tmp.insert(record.cbegin(), record.cend());
     m_Data.push_back(tmp);
 }
@@ -35,13 +33,17 @@ void Table::UpdateRecord(long index, const Record& data)
     }
 }
 
-void Table::Read()
+void Table::Load()
 {
     OpenFile();
 
     size_t colsSize = ReadSize();
-    m_Columns.resize(colsSize);
-    for (auto& col: m_Columns) col = ReadString();
+    m_Columns.reserve(colsSize);
+    for (size_t i = 0; i < colsSize; ++i)
+    {
+        std::string name = ReadString(), type = ReadString();
+        m_Columns[name] = type;
+    }
 
     size_t dataSize = ReadSize();
     m_Data.resize(dataSize);
@@ -51,8 +53,8 @@ void Table::Read()
         record.reserve(recordSize);
         for (size_t i = 0; i < recordSize; ++i)
         {
-            std::string key = ReadString(), value = ReadString();
-            record[key] = value;
+            std::string name = ReadString(), value = ReadString();
+            record[name] = value;
         }
     }
 
@@ -60,22 +62,27 @@ void Table::Read()
 
     if (m_Data.empty()) return;
     std::string lastId = m_Data.back().at("id");
-    ID::SetLastID(std::stoi(lastId));
+    m_IDGenerator.SetLastValue(std::stoi(lastId));
 }
 
 void Table::Save()
 {
     CreateFile();
+
     WriteSize(m_Columns.size());
-    for (const auto& col: m_Columns) WriteString(col);
+    for (const auto&[name, type]: m_Columns)
+    {
+        WriteString(name);
+        WriteString(type);
+    }
 
     WriteSize(m_Data.size());
     for (const auto& record: m_Data)
     {
         WriteSize(record.size());
-        for (const auto&[key, value]: record)
+        for (const auto&[name, value]: record)
         {
-            WriteString(key);
+            WriteString(name);
             WriteString(value);
         }
     }

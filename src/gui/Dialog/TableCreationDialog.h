@@ -2,9 +2,6 @@
 
 #include "gui/wxwidgets.h"
 #include "Utils/types.h"
-#include <string>
-#include <vector>
-#include <array>
 
 class TableCreationDialog : public wxDialog
 {

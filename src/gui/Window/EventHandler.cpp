@@ -1,25 +1,41 @@
 #include "EventHandler.h"
-#include <wx/frame.h>
-#include <wx/msgdlg.h>
+#include "Window.h"
 #include "gui/Dialog/DbSelectionDialog.h"
 #include "gui/Dialog/DbCreationDialog.h"
 #include "gui/Dialog/TableCreationDialog.h"
 #include "gui/Dialog/RecordEditorDialog.h"
 #include "gui/Panel/RecordsViewPanel.h"
 #include "gui/Panel/TablesSelectionPanel.h"
+#include "Database/Database.h"
 
-EventHandler::EventHandler(wxFrame* parent, RecordsViewPanel* recordsPanel)
-        : m_Parent(parent), m_RecordsPanel(recordsPanel) { }
+EventHandler::EventHandler(Window* parent) : m_Parent(parent) { }
 
 void EventHandler::UpdateRecordsView() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(m_RecordsPanel);
-    m_RecordsPanel->ShowRecords(m_Database->GetTable()->GetData(), m_Database->GetTable()->GetColumns());
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
+    panel->ShowRecords(m_Database->GetTable()->GetData(), m_Database->GetTable()->GetColumns());
 }
 
-void EventHandler::OpenDatabase(const UpdateUIFn& updateUI)
+void EventHandler::UpdateTableUI(const std::string& tableName, bool update)
 {
+    CHECK_NULL(m_Parent);
+    if (update) m_Parent->UpdateUIData();
+
+    m_Parent->SetStatusText(wxString::Format("Active table: %s", tableName.c_str()), 1);
+    UpdateRecordsView();
+    m_Parent->AddRecordTools();
+}
+
+void EventHandler::OpenDatabase()
+{
+    CHECK_NULL(m_Parent);
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
     auto* dialog = new DBSelectionDialog(m_Parent, wxID_ANY, "Open database");
     int id = dialog->ShowModal();
 
@@ -27,13 +43,18 @@ void EventHandler::OpenDatabase(const UpdateUIFn& updateUI)
     {
         m_Database = Pointer(new Database(dialog->GetDbName()));
         m_Database->OpenDb();
-        updateUI();
+        panel->ClearRecords();
+        m_Parent->UpdateUIData();
     }
     dialog->Destroy();
 }
 
-void EventHandler::CreateDB(const UpdateUIFn& updateUI)
+void EventHandler::CreateDB()
 {
+    CHECK_NULL(m_Parent);
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
     auto* dialog = new DBCreationDialog(m_Parent, wxID_ANY);
     int id = dialog->ShowModal();
 
@@ -41,13 +62,18 @@ void EventHandler::CreateDB(const UpdateUIFn& updateUI)
     {
         m_Database = Pointer(new Database(dialog->GetDbName()));
         m_Database->CreateDb();
-        updateUI();
+        panel->ClearRecords();
+        m_Parent->UpdateUIData();
     }
     dialog->Destroy();
 }
 
 void EventHandler::DropDB() const
 {
+    CHECK_NULL(m_Parent);
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
     auto* dialog = new DBSelectionDialog(m_Parent, wxID_ANY, "Delete database");
     int id = dialog->ShowModal();
 
@@ -60,31 +86,41 @@ void EventHandler::DropDB() const
         if (confirmId == wxID_YES) Database::DropDb(dbName);
         confirmDialog->Destroy();
         if (m_Database != nullptr && m_Database->GetName() == dbName)
+        {
             m_Parent->SetStatusText("No database is opened", 0);
+            panel->ClearRecords();
+            m_Parent->ClearTableView();
+        }
     }
 
     dialog->Destroy();
 }
 
-void EventHandler::OpenTable(TablesSelectionPanel* tablesPanel, const UpdateTableUIFn& updateTableUI) const
+void EventHandler::OpenTable()
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(tablesPanel);
-    const std::string& tableName = tablesPanel->GetTableName();
+    auto* panel = m_Parent->GetTablesPanel();
+    CHECK_NULL(panel);
+
+    const std::string& tableName = panel->GetTableName();
     m_Database->OpenTable(tableName);
-    updateTableUI(tableName, false);
+    UpdateTableUI(tableName, false);
 }
 
-void EventHandler::CreateTable(const UpdateTableUIFn& updateTableUI) const
+void EventHandler::CreateTable()
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
+
     auto* dialog = new TableCreationDialog(m_Parent, wxID_ANY);
     int id = dialog->ShowModal();
 
     if (id == wxID_OK)
     {
         m_Database->CreateTable(dialog->GetTableName(), dialog->GetColumns());
-        updateTableUI(m_Database->GetTable()->GetName(), true);
+        UpdateTableUI(m_Database->GetTable()->GetName(), true);
+
     }
     dialog->Destroy();
 }
@@ -95,10 +131,13 @@ void EventHandler::SaveTable() const
     m_Database->GetTable()->Save();
 }
 
-void EventHandler::DropTable(const UpdateUIFn& updateUI) const
+void EventHandler::DropTable() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(m_RecordsPanel);
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
     const std::string& tableName = m_Database->GetTable()->GetName();
     const auto& message = wxString::Format("Are you sure you want to delete: %s ?", tableName.c_str());
     auto* confirmDialog = new wxMessageDialog(m_Parent, message, "Delete table", wxYES | wxNO);
@@ -106,16 +145,16 @@ void EventHandler::DropTable(const UpdateUIFn& updateUI) const
     if (confirmId == wxID_YES)
     {
         m_Database->DropTable();
-        m_RecordsPanel->ClearRecords();
-        updateUI();
+        panel->ClearRecords();
+        m_Parent->UpdateUIData();
     }
     confirmDialog->Destroy();
 }
 
 void EventHandler::AddRecord() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(m_RecordsPanel);
 
     auto* dialog = new RecordEditorDialog(m_Parent, m_Database->GetTable()->GetColumns());
     int id = dialog->ShowModal();
@@ -130,9 +169,12 @@ void EventHandler::AddRecord() const
 
 void EventHandler::DeleteRecord() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(m_RecordsPanel);
-    long index = m_RecordsPanel->GetSelectedRecord();
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
+    long index = panel->GetSelectedRecord();
     if (index < 0)
     {
         wxMessageBox("No record is selected", "Error", wxICON_ERROR);
@@ -145,7 +187,7 @@ void EventHandler::DeleteRecord() const
     if (confirmId == wxID_YES)
     {
         m_Database->GetTable()->DeleteRecord(index);
-        m_RecordsPanel->ResetSelectedRecord();
+        panel->ResetSelectedRecord();
         UpdateRecordsView();
     }
     confirmDialog->Destroy();
@@ -153,9 +195,12 @@ void EventHandler::DeleteRecord() const
 
 void EventHandler::EditRecord() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    CHECK_NULL(m_RecordsPanel);
-    long index = m_RecordsPanel->GetSelectedRecord();
+    auto* panel = m_Parent->GetRecordsPanel();
+    CHECK_NULL(panel);
+
+    long index = panel->GetSelectedRecord();
     if (index < 0)
     {
         wxMessageBox("No record is selected", "Error", wxICON_ERROR);

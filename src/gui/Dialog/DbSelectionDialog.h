@@ -1,8 +1,6 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include <string>
-#include <wx/listbase.h>
 
 class DBSelectionDialog : public wxDialog
 {

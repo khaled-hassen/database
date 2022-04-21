@@ -2,8 +2,6 @@
 
 #include "gui/wxwidgets.h"
 #include "Utils/types.h"
-#include <unordered_map>
-#include <string>
 
 enum class Mode
 {

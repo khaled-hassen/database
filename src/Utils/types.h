@@ -6,4 +6,4 @@
 
 using Record = std::unordered_map<std::string, std::string>;
 using Data = std::vector<Record>;
-using Columns = std::vector<std::string>;
+using Columns = std::unordered_map<std::string, std::string>;

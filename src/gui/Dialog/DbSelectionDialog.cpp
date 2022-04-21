@@ -1,7 +1,5 @@
 #include "DbSelectionDialog.h"
 #include "Database/Database.h"
-#include <wx/msw/window.h>
-#include <wx/msw/dialog.h>
 #include <wx/listctrl.h>
 #include "gui/wxWindowId.h"
 

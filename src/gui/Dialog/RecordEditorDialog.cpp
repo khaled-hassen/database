@@ -1,7 +1,4 @@
 #include "RecordEditorDialog.h"
-#include <sstream>
-#include <string>
-#include <wx/valtext.h>
 #include <wx/valnum.h>
 #include "Utils/StringUtils.h"
 
@@ -24,19 +21,12 @@ RecordEditorDialog::RecordEditorDialog(wxWindow* parent, const Columns& cols, Mo
     mainSizer->AddSpacer(GAP);
 
     m_DataCtrl.reserve(cols.size());
-    for (const auto& col: cols)
+    for (const auto& [name, type]: cols)
     {
         // skip the id column (automatically generated)
-        if (col == "id:ID") continue;
-        std::string name, type;
-        std::stringstream stream(col);
-        std::getline(stream, name, ':');
-        std::getline(stream, type, ':');
-        std::string displayName = name;
-        StringUtils::Replace(displayName, '-', ' ');
-
+        if (name == "id") continue;
         auto* colSizer = new wxBoxSizer(wxHORIZONTAL);
-        auto* label = new wxStaticText(this, wxID_ANY, displayName);
+        auto* label = new wxStaticText(this, wxID_ANY, StringUtils::Replace(name, '-', ' '));
         label->SetFont(FONT);
         colSizer->Add(label);
 

@@ -2,7 +2,6 @@
 #include "gui/wxWindowId.h"
 #include "Utils/StringUtils.h"
 #include <wx/listctrl.h>
-#include <string>
 
 BEGIN_EVENT_TABLE(RecordsViewPanel, wxPanel)
                 EVT_LIST_ITEM_SELECTED(wxWindowId::RECORDS_VIEW, RecordsViewPanel::OnSelectItem)
@@ -31,12 +30,8 @@ void RecordsViewPanel::ShowRecords(const Data& data, const Columns& columns)
     std::string::size_type size = columns.size();
     int width = static_cast<int>(GetSize().GetWidth() / size);
 
-    for (const auto& col: columns)
-    {
-        std::string name = col.substr(0, col.find(':'));
-        StringUtils::Replace(name, '-', ' ');
-        m_RecordsList->AppendColumn(name, wxLIST_FORMAT_LEFT, width);
-    }
+    for (const auto&[name, _]: columns)
+        m_RecordsList->AppendColumn(StringUtils::Replace(name, '-', ' '), wxLIST_FORMAT_LEFT, width);
 
     int index = 0;
     for (const auto& record: data)

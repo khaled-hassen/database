@@ -1,7 +1,6 @@
 #pragma once
 
 #include "gui/wxwidgets.h"
-#include <string>
 
 class DBCreationDialog : public wxDialog
 {
