@@ -8,16 +8,19 @@ class Table : public Savable
 {
 private:
     IDGenerator m_IDGenerator;
+    long m_Index = -1;
     std::string m_Name;
     Columns m_Columns;
     Data m_Data;
+    bool m_UnsavedChanges = false;
 
 public:
     // to be called when creating a new table
-    Table(std::string path, std::string name, Columns columns);
+    // pass the columns when creating a new table, don't pass them when opening a table
+    Table(long index, std::string path, std::string name, Columns columns = {});
 
     // to be called when opening a saved table
-    Table(std::string path, std::string name);
+    // Table(long index, std::string path, std::string name);
 
     [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
 
@@ -26,6 +29,9 @@ public:
     [[nodiscard]] inline const Record& GetRecord(long index) const { return m_Data.at(index); }
 
     [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
+
+    [[nodiscard]] inline bool HasUnsavedChanged() const { return m_UnsavedChanges; }
+    [[nodiscard]] inline long GetIndex() const { return m_Index; }
 
     // Read the table data stored in the file
     void Load() override;

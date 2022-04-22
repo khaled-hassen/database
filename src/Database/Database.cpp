@@ -63,7 +63,7 @@ void Database::DropDb(const std::string& dbName)
     Database db(dbName);
     db.OpenDb();
     for (const auto& table: db.m_TableNames)
-        Table(CreateTablePath(table), table).Delete();
+        Table(-1, CreateTablePath(table), table).Delete();
     db.Delete();
 }
 
@@ -79,18 +79,18 @@ void Database::CreateTable(const std::string& tableName, const Columns& cols)
     const std::string& path = CreateTablePath(tableName);
     if (fs::exists(path)) throw std::exception("Table exists");
 
-    m_Table = Pointer(new Table(path, tableName, cols));
+    m_Table = Pointer(new Table(0, path, tableName, cols));
     m_Table->Save();
     m_TableNames.push_back(tableName);
     Save();
 }
 
-void Database::OpenTable(const std::string& tableName)
+void Database::OpenTable(const std::string& tableName, long index)
 {
     CheckOpenedDb();
     CloseTable();
     const std::string& path = CreateTablePath(tableName);
-    m_Table = Pointer(new Table(path, tableName));
+    m_Table = Pointer(new Table(index, path, tableName));
     m_Table->Load();
 }
 

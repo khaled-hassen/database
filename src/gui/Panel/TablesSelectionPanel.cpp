@@ -30,16 +30,54 @@ void TablesSelectionPanel::ShowTablesList(const std::vector<std::string>& items)
     for (const auto& item: items) m_TableList->InsertItem(0, item);
 }
 
-void TablesSelectionPanel::ClearTables(){
+void TablesSelectionPanel::ClearTables()
+{
     CHECK_NULL(m_TableList);
     m_TableList->ClearAll();
 }
 
 void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
 {
-    CHECK_NULL(GetParent());
+    if (m_TableIndex == event.GetIndex()) return;
 
+    bool deselected = true;
+    if (m_TableIndex > -1) deselected = OnDeselectTable();
+    if (!deselected) return;
+
+    CHECK_NULL(GetParent());
+    m_TableIndex = event.GetIndex();
     m_TableName = event.GetText();
     wxCommandEvent ev(wxEVT_MENU, GetId());
     wxPostEvent(GetParent(), ev);
+}
+
+bool TablesSelectionPanel::OnDeselectTable()
+{
+    if (!m_HasUnsavedChanges) return true;
+    auto* dialog = new wxMessageDialog(this,
+                                       "There are some unsaved changes. Leaving without saving will result in losing these changes.",
+                                       "Warning", wxOK | wxCANCEL | wxICON_WARNING);
+    int id = dialog->ShowModal();
+    bool cancel = id == wxID_CANCEL;
+    bool ok = id == wxID_OK;
+    dialog->Destroy();
+    if (cancel)
+    {
+        CHECK_NULL(m_TableList) false; // same as if (m_TableList == nullptr) return false;
+        m_TableList->Select(m_TableIndex);
+        return false;
+    }
+
+    if (ok) SetTableSaveState(m_TableIndex, false);
+    return true;
+}
+
+void TablesSelectionPanel::SetTableSaveState(long index, bool unsaved)
+{
+    CHECK_NULL(m_TableList);
+
+    m_HasUnsavedChanges = unsaved;
+    const wxString& text = m_TableList->GetItemText(index);
+    if (unsaved) m_TableList->SetItemText(index, text + "*");
+    else m_TableList->SetItemText(index, text.substr(0, text.length() - 1));
 }

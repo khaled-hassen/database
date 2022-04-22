@@ -104,7 +104,7 @@ void EventHandler::OpenTable()
     CHECK_NULL(panel);
 
     const std::string& tableName = panel->GetTableName();
-    m_Database->OpenTable(tableName);
+    m_Database->OpenTable(tableName, panel->GetTableIndex());
     UpdateTableUI(tableName, false);
 }
 
@@ -127,8 +127,11 @@ void EventHandler::CreateTable()
 
 void EventHandler::SaveTable() const
 {
+    CHECK_NULL(m_Parent);
     CHECK_NULL(m_Database);
-    m_Database->GetTable()->Save();
+    const Pointer<Table>& table = m_Database->GetTable();
+    table->Save();
+    m_Parent->GetTablesPanel()->SetTableSaveState(table->GetIndex(), table->HasUnsavedChanged());
 }
 
 void EventHandler::DropTable() const
@@ -161,8 +164,10 @@ void EventHandler::AddRecord() const
 
     if (id == wxID_OK)
     {
-        m_Database->GetTable()->InsertRecord(dialog->GetRecord());
+        const Pointer<Table>& table = m_Database->GetTable();
+        table->InsertRecord(dialog->GetRecord());
         UpdateRecordsView();
+        m_Parent->GetTablesPanel()->SetTableSaveState(table->GetIndex(), table->HasUnsavedChanged());
     }
     dialog->Destroy();
 }
@@ -186,9 +191,11 @@ void EventHandler::DeleteRecord() const
     int confirmId = confirmDialog->ShowModal();
     if (confirmId == wxID_YES)
     {
-        m_Database->GetTable()->DeleteRecord(index);
+        const Pointer<Table>& table = m_Database->GetTable();
+        table->DeleteRecord(index);
         panel->ResetSelectedRecord();
         UpdateRecordsView();
+        m_Parent->GetTablesPanel()->SetTableSaveState(table->GetIndex(), table->HasUnsavedChanged());
     }
     confirmDialog->Destroy();
 }
@@ -213,8 +220,10 @@ void EventHandler::EditRecord() const
 
     if (id == wxID_OK)
     {
-        m_Database->GetTable()->UpdateRecord(index, dialog->GetRecord());
+        const Pointer<Table>& table = m_Database->GetTable();
+        table->UpdateRecord(index, dialog->GetRecord());
         UpdateRecordsView();
+        m_Parent->GetTablesPanel()->SetTableSaveState(table->GetIndex(), table->HasUnsavedChanged());
     }
     dialog->Destroy();
 }

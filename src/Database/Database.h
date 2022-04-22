@@ -61,7 +61,7 @@ public:
     void CreateTable(const std::string& tableName, const Columns& cols);
 
     // open a table
-    void OpenTable(const std::string& tableName);
+    void OpenTable(const std::string& tableName, long index);
 
     // get the opened table. Throw an error when no table is opened
     [[nodiscard]] inline const Pointer<Table>& GetTable() const;

@@ -1,5 +1,6 @@
 #include "App.h"
 #include "gui/Window/Window.h"
+#include <crtdbg.h>
 
 bool App::OnInit()
 {

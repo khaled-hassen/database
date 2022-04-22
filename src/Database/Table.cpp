@@ -1,11 +1,11 @@
 #include "Table.h"
 #include "Utils/IDGenerator.h"
 
-Table::Table(std::string path, std::string name, Columns columns)
-        : Savable(std::move(path)), m_Name(std::move(name)), m_Columns(std::move(columns)) { }
+Table::Table(long index, std::string path, std::string name, Columns columns)
+        : Savable(std::move(path)), m_Name(std::move(name)), m_Columns(std::move(columns)), m_Index(index) { }
 
-Table::Table(std::string path, std::string name)
-        : Savable(std::move(path)), m_Name(std::move(name)) { }
+// Table::Table(long index, std::string path, std::string name)
+//         : Savable(std::move(path)), m_Name(std::move(name)), m_Index(index) { }
 
 void Table::InsertRecord(const Record& record)
 {
@@ -14,12 +14,14 @@ void Table::InsertRecord(const Record& record)
     tmp.insert({ "id", m_IDGenerator.GenerateID() });
     tmp.insert(record.cbegin(), record.cend());
     m_Data.push_back(tmp);
+    m_UnsavedChanges = true;
 }
 
 void Table::DeleteRecord(long index)
 {
     if (index >= m_Data.size() || index < 0) throw std::exception("This record doesn't exit");
     m_Data.erase(m_Data.cbegin() + index);
+    m_UnsavedChanges = true;
 }
 
 void Table::UpdateRecord(long index, const Record& data)
@@ -31,6 +33,7 @@ void Table::UpdateRecord(long index, const Record& data)
         if (key == "id") continue;
         record.at(key) = value;
     }
+    m_UnsavedChanges = true;
 }
 
 void Table::Load()
@@ -88,5 +91,6 @@ void Table::Save()
     }
 
     CloseFile();
+    m_UnsavedChanges = false;
 }
 
