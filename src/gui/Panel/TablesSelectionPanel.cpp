@@ -41,7 +41,7 @@ void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
     if (m_TableIndex == event.GetIndex()) return;
 
     bool deselected = true;
-    if (m_TableIndex > -1) deselected = OnDeselectTable();
+    if (m_TableIndex > -1) deselected = CanCloseTable();
     if (!deselected) return;
 
     CHECK_NULL(GetParent());
@@ -51,7 +51,7 @@ void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
     wxPostEvent(GetParent(), ev);
 }
 
-bool TablesSelectionPanel::OnDeselectTable()
+bool TablesSelectionPanel::CanCloseTable()
 {
     if (!m_HasUnsavedChanges) return true;
     auto* dialog = new wxMessageDialog(this,

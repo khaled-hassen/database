@@ -26,11 +26,11 @@ public:
 
     void SetTableSaveState(long index, bool unsaved);
 
+    // return true if table is table can be closed otherwise return false
+    bool CanCloseTable();
+
 private:
     void OnSelectTable(class wxListEvent& event);
-
-    // return true if table is deselected otherwise return false
-    bool OnDeselectTable();
 
 DECLARE_EVENT_TABLE()
 };

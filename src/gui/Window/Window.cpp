@@ -70,8 +70,8 @@ Window::Window(const wxString& title, const wxSize& size)
     BIND_EVENT(wxWindowId::ADD_RECORD, EventHandler::AddRecord);
     BIND_EVENT(wxWindowId::EDIT_RECORD, EventHandler::EditRecord);
     BIND_EVENT(wxWindowId::DELETE_RECORD, EventHandler::DeleteRecord);
-
-    Bind(wxEVT_MENU, [this](wxCommandEvent&) { Close(true); }, wxID_EXIT);
+    Bind(wxEVT_MENU, &Window::OnMenuClose, this, wxID_EXIT);
+    Bind(wxEVT_CLOSE_WINDOW, &Window::OnWindowClose, this, GetId());
 }
 
 void Window::UpdateUIData()
@@ -125,4 +125,17 @@ void Window::ClearTableView()
 {
     CHECK_NULL(m_TablesPanel);
     m_TablesPanel->ClearTables();
+}
+
+void Window::OnMenuClose(wxCommandEvent&)
+{
+    CHECK_NULL(m_TablesPanel);
+    if (!m_TablesPanel->CanCloseTable()) return;
+    Close(true);
+}
+
+void Window::OnWindowClose(wxCloseEvent&) {
+    CHECK_NULL(m_TablesPanel);
+    if (!m_TablesPanel->CanCloseTable()) return;
+    Destroy();
 }

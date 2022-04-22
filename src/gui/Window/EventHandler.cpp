@@ -33,6 +33,7 @@ void EventHandler::UpdateTableUI(const std::string& tableName, bool update)
 void EventHandler::OpenDatabase()
 {
     CHECK_NULL(m_Parent);
+    if (!m_Parent->GetTablesPanel()->CanCloseTable()) return;
     auto* panel = m_Parent->GetRecordsPanel();
     CHECK_NULL(panel);
 
@@ -52,6 +53,7 @@ void EventHandler::OpenDatabase()
 void EventHandler::CreateDB()
 {
     CHECK_NULL(m_Parent);
+    if (!m_Parent->GetTablesPanel()->CanCloseTable()) return;
     auto* panel = m_Parent->GetRecordsPanel();
     CHECK_NULL(panel);
 
@@ -111,6 +113,8 @@ void EventHandler::OpenTable()
 void EventHandler::CreateTable()
 {
     CHECK_NULL(m_Parent);
+    if (!m_Parent->GetTablesPanel()->CanCloseTable()) return;
+
     CHECK_NULL(m_Database);
 
     auto* dialog = new TableCreationDialog(m_Parent, wxID_ANY);

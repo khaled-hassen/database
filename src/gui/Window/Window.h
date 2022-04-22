@@ -32,6 +32,10 @@ public:
 
 private:
     void AddTableTools();
+
+    void OnMenuClose(wxCommandEvent&);
+
+    void OnWindowClose(wxCloseEvent&);
 };
 
 
