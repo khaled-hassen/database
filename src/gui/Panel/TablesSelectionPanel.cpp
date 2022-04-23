@@ -40,9 +40,9 @@ void TablesSelectionPanel::OnSelectTable(wxListEvent& event)
 {
     if (m_TableIndex == event.GetIndex()) return;
 
-    bool deselected = true;
-    if (m_TableIndex > -1) deselected = CanCloseTable();
-    if (!deselected) return;
+    bool ok = true;
+    if (m_TableIndex > -1) ok = CanCloseTable();
+    if (!ok) return;
 
     CHECK_NULL(GetParent());
     m_TableIndex = event.GetIndex();
@@ -63,13 +63,17 @@ bool TablesSelectionPanel::CanCloseTable()
     dialog->Destroy();
     if (cancel)
     {
-        CHECK_NULL(m_TableList) false; // same as if (m_TableList == nullptr) return false;
-        m_TableList->Select(m_TableIndex);
+        Select(m_TableIndex);
         return false;
     }
 
     if (ok) SetTableSaveState(m_TableIndex, false);
     return true;
+}
+
+void TablesSelectionPanel::Select(long index) {
+    CHECK_NULL(m_TableList);
+    m_TableList->Select(index);
 }
 
 void TablesSelectionPanel::SetTableSaveState(long index, bool unsaved)

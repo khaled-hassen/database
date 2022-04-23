@@ -31,6 +31,7 @@ public:
     [[nodiscard]] inline const Columns& GetColumns() const { return m_Columns; }
 
     [[nodiscard]] inline bool HasUnsavedChanged() const { return m_UnsavedChanges; }
+
     [[nodiscard]] inline long GetIndex() const { return m_Index; }
 
     // Read the table data stored in the file

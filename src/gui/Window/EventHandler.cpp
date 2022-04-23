@@ -114,7 +114,6 @@ void EventHandler::CreateTable()
 {
     CHECK_NULL(m_Parent);
     if (!m_Parent->GetTablesPanel()->CanCloseTable()) return;
-
     CHECK_NULL(m_Database);
 
     auto* dialog = new TableCreationDialog(m_Parent, wxID_ANY);
@@ -124,7 +123,7 @@ void EventHandler::CreateTable()
     {
         m_Database->CreateTable(dialog->GetTableName(), dialog->GetColumns());
         UpdateTableUI(m_Database->GetTable()->GetName(), true);
-
+        m_Parent->GetTablesPanel()->Select(m_Database->GetTable()->GetIndex());
     }
     dialog->Destroy();
 }
@@ -154,6 +153,7 @@ void EventHandler::DropTable() const
         m_Database->DropTable();
         panel->ClearRecords();
         m_Parent->UpdateUIData();
+        m_Parent->GetTablesPanel()->ResetSelectedTable();
     }
     confirmDialog->Destroy();
 }

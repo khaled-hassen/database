@@ -19,6 +19,8 @@ public:
 
     [[nodiscard]] inline long GetTableIndex() const { return m_TableIndex; }
 
+    inline void ResetSelectedTable() { m_TableIndex = -1; }
+
     // display the tables list to the ui
     void ShowTablesList(const std::vector<std::string>& items);
 
@@ -28,6 +30,8 @@ public:
 
     // return true if table is table can be closed otherwise return false
     bool CanCloseTable();
+
+    void Select(long index);
 
 private:
     void OnSelectTable(class wxListEvent& event);
